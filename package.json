@@ -1,11 +1,11 @@
 {
-  "name": "asciidoctor-docs-ui",
-  "description": "Produces the UI bundle for docs.asciidoctor.org",
-  "homepage": "https://docs.asciidoctor.org",
+  "name": "antora-tldr-ui",
+  "description": "Produces the UI bundle for a blog-style Antora site",
+  "homepage": "https://github.com/timothysparg/antora-tldr-ui",
   "license": "MPL-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/asciidoctor/asciidoctor-docs-ui"
+    "url": "https://github.com/timothysparg/antora-tldr-ui"
   },
   "scripts": {
     "start": "gulp preview"

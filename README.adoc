@@ -1,4 +1,4 @@
-= Asciidoctor Docs UI
+= Antora TLDR UI
 // Variables:
 :current-release: prod-349
 // Settings:
@@ -12,11 +12,11 @@ ifdef::env-github[]
 :badges:
 endif::[]
 // Project URLs:
-:project-repo-name: asciidoctor/asciidoctor-docs-ui
+:project-repo-name: timothysparg/antora-tldr-ui
 :url-project: https://github.com/{project-repo-name}
-:url-preview: https://asciidoctor-docs-ui.netlify.app
+:url-preview: https://antora-tldr-ui.netlify.app
 :url-ci: {project-repo-name}/actions
-:url-netlify-deploys: https://app.netlify.com/sites/asciidoctor-docs-ui/deploys
+:url-netlify-deploys: https://app.netlify.com/sites/antora-tldr-ui/deploys
 // External URLs:
 :url-antora: https://antora.org
 :url-antora-docs: https://docs.antora.org
@@ -37,8 +37,8 @@ endif::[]
 
 toc::[]
 
-This project provides the UI for the Asciidoctor docs site.
-It provides both the visual theme and user interactions for the docs site.
+This project provides a blog-focused UI theme for Antora sites.
+It provides both the visual theme and user interactions optimized for blog-style content.
 The UI bundle that this project produces is designed to be used with Antora.
 It bundles the HTML templates (layouts, partials, and helpers), CSS, JavaScript, fonts, and site-wide images.
 The rest of the material for the docs site comes from the content repositories.
@@ -131,7 +131,7 @@ This folder does not get included in the UI bundle and should _not_ be committed
 === Preview the UI
 
 The UI project is configured to preview offline.
-The files in the [.path]_preview-site-src/_ folder provide the sample content that allow you to see the UI in action.
+The files in the [.path]_preview-src/_ folder provide the sample content that allow you to see the UI in action.
 In this folder, you'll primarily find pages written in AsciiDoc.
 These pages provide a representative sample and kitchen sink of content from the real site.
 
