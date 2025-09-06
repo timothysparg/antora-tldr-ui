@@ -230,8 +230,38 @@ This workflow ensures systematic UI modifications with proper validation and doc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @README.adoc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @CLAUDE.md
 - When committing follow the conventional commits syntax for commit messages
-- When committing add exactly two Co-Authors: "Claude Code" and the LLM model name (e.g., "Sonnet 4", "Opus", etc). Do not add a generic "Claude" Co-Author
-- When committing add the the original prompt and all subsequent user requests. Prefix the prompt with "User-Prompt:" If there are multiple prompts place each new prompt on a new line
-- DO NOT save prompt messages from the user that instructs Claude to save or commit the set of changes (e.g., "save these changes", "commit this", "please commit")
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
-- When committing DO NOT ADD the Generated with Claude Code line
+
+## Commit Message Format
+
+Commit messages must follow this exact structure:
+
+1. **Subject line**: Conventional commits format (e.g., "feat:", "fix:", "refactor:")
+2. **Body**: Detailed description of changes (optional)
+3. **User-Prompt section**: Original user request(s) - second to last
+4. **Co-Authors section**: Attribution - must be the last lines
+
+### User-Prompt Section
+- Add the original prompt and all subsequent user requests
+- Prefix with "User-Prompt:" on its own line
+- If multiple prompts, place each new prompt on a new line
+- DO NOT include prompt messages that only instruct to save/commit (e.g., "save these changes", "commit this", "please commit")
+
+### Co-Authors Section  
+- Must be the final lines of the commit message
+- Add exactly two Co-Authors: "Claude Code 🤖" and the LLM model name (e.g., "Sonnet 4", "Opus", etc)
+- Do not add a generic "Claude" Co-Author
+- DO NOT ADD any "Generated with Claude Code" lines - attribution is handled via Co-Authors
+
+### Example Commit Message:
+```
+feat: add dark mode toggle to settings
+
+Implement user-requested dark mode functionality with persistent storage
+and smooth transitions between light and dark themes.
+
+User-Prompt: I want to add a dark mode toggle to the application settings. Make sure you run the tests and build when you're done!
+
+Co-Authored-By: Claude Code 🤖 <noreply@anthropic.com>
+Co-Authored-By: Sonnet 4 <noreply@anthropic.com>
+```
