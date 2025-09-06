@@ -106,5 +106,7 @@ This project is configured with Model Context Protocol (MCP) servers to enhance 
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @README.adoc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @CLAUDE.md
 - When committing follow the conventional commits syntax for commit messages
-- Add Claude Code as a Co-Author when committing
-- Add The LLM Model (Sonnet, Opus, etc) as a Co-Author when committing
+- When committing add "Claude Code" as a Co-Author
+- When committing add The LLM Model (Sonnet, Opus, etc)
+- When committing add the prompt(s) that were given by the user
+- When committing DO NOT ADD the Generated with Claude Code line
