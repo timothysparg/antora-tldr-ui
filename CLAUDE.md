@@ -230,8 +230,7 @@ This workflow ensures systematic UI modifications with proper validation and doc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @README.adoc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @CLAUDE.md
 - When committing follow the conventional commits syntax for commit messages
-- When committing add "Claude Code" as a Co-Author
-- When committing add The LLM Model (Sonnet, Opus, etc)
+- When committing add exactly two Co-Authors: "Claude Code" and the LLM model name (e.g., "Sonnet 4", "Opus", etc). Do not add a generic "Claude" Co-Author
 - When committing add the the original prompt and all subsequent user requests. Prefix the prompt with "User-Prompt:" If there are multiple prompts place each new prompt on a new line
 - DO NOT save prompt messages from the user that instructs Claude to save or commit the set of changes (e.g., "save these changes", "commit this", "please commit")
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
