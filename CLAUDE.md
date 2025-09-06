@@ -217,6 +217,37 @@ When modifying UI elements, follow this systematic approach to find, change, and
 
 This workflow ensures systematic UI modifications with proper validation and documentation of changes.
 
+### Antora Preview Configuration and Homepage Routing
+
+When working with Antora preview content and homepage configuration:
+
+#### Homepage Configuration Process
+1. **File Naming**: The file that serves as the homepage must be named `index.adoc` in the `preview-src/` directory
+2. **UI Model Configuration**: Update `preview-src/ui-model.yml` to set:
+   - `homeUrl: &home_url /index.html` (must match the generated HTML filename)
+   - `relativeSrcPath: index.adoc` (must match the source filename)
+   - `title:` should reflect the actual page title from the AsciiDoc file
+
+#### Common Homepage Routing Issues and Solutions
+- **Problem**: Root URL shows directory listing or wrong content after configuration changes
+- **Root Cause**: Cached build files or conflicting file names prevent proper routing
+- **Solution Process**:
+  1. Remove any conflicting files (e.g., old `index.adoc` files with different content)
+  2. Run `npx gulp clean` to clear all build artifacts
+  3. Ensure only one `index.adoc` file exists with the desired homepage content
+  4. Restart the development server with `npm start`
+  5. Verify that `public/index.html` is generated with correct content
+
+#### Preview Content File Organization
+- **Homepage**: Always use `index.adoc` for the homepage content
+- **Other Content**: Use descriptive names (e.g., `blog-post-name.adoc`, `kitchensink.adoc`)
+- **Configuration**: The `ui-model.yml` file controls routing and must be consistent with actual filenames
+
+#### Build Cache Considerations
+- Build artifacts are cached in the `public/` directory
+- When making structural changes to content files or routing configuration, always run `npx gulp clean` followed by a fresh `npm start`
+- Changes to `ui-model.yml` require a server restart to take effect
+
 ## Important Notes
 
 - Node.js version managed via `.mise.toml` (migrated from .nvmrc)
@@ -243,10 +274,22 @@ Commit messages must follow this exact structure:
 4. **Co-Authors section**: Attribution - must be the last lines
 
 ### User-Prompt Section
-- Add the original prompt and all subsequent user requests
+- **CRITICAL**: Include user prompts and requests that are relevant to the specific changes being committed
+- **Scope Rules**:
+  - **New session**: All prompts/requests from start of session until current commit
+  - **Subsequent commits**: All prompts/requests since the last commit that relate to current changes
+  - **Multiple commits**: Use discretion to assign prompts to the most relevant commit (prompts may be relevant to multiple commits)
+- Add relevant prompts in chronological order
 - Prefix with "User-Prompt:" on its own line
-- If multiple prompts, place each new prompt on a new line
-- DO NOT include prompt messages that only instruct to save/commit (e.g., "save these changes", "commit this", "please commit")
+- If multiple prompts, place each new prompt on a new line, maintaining chronological order
+- Include requests that led to code changes, feature additions, UI modifications, or configuration updates being committed
+- DO NOT include prompt messages that only instruct to save/commit (e.g., "save these changes", "commit this", "please commit", "save please")
+- **Example format for relevant prompts**:
+  ```
+  User-Prompt: please remove the navigation section  
+  User-Prompt: please remove the breadcrumbs section
+  User-Prompt: now we just have an empty toolbar, lets remove that as well
+  ```
 
 ### Co-Authors Section  
 - Must be the final lines of the commit message
@@ -265,4 +308,45 @@ User-Prompt: I want to add a dark mode toggle to the application settings. Make 
 
 Co-Authored-By: Claude Code 🤖 <noreply@anthropic.com>
 Co-Authored-By: Sonnet 4 <noreply@anthropic.com>
+```
+
+### Example with Multiple User Prompts:
+```
+refactor: transform UI to blog layout and configure homepage
+
+Remove navigation sidebar, simplify footer, remove breadcrumbs and toolbar.
+Create comprehensive blog structure with landing page and sample posts.
+Configure Antora homepage routing to serve blog at root URL.
+
+User-Prompt: Lets change the name of @preview-src/index.adoc to kitchensink.adoc @preview-src/home.adoc
+User-Prompt: please remove the navigation section
+User-Prompt: Cleanup the footer. Only keep the Asciidoctor logo and the text "Produced by Antora and Asciidoctor"
+User-Prompt: please center the contents of the footer as well
+User-Prompt: please remove the breadcrumbs section
+User-Prompt: now we just have an empty toolbar, lets remove that as well
+User-Prompt: Please create a home.adoc as the landing page of the blog
+User-Prompt: lets set @preview-src/home.adoc as the home page in @preview-src/ui-model.yml
+
+Co-Authored-By: Claude Code 🤖 <noreply@anthropic.com>
+Co-Authored-By: Sonnet 4 <noreply@anthropic.com>
+```
+
+### Example of Splitting Changes Across Multiple Commits:
+If you were to split the above into multiple commits, you might have:
+
+**Commit 1 - UI Cleanup:**
+```
+refactor: remove navigation sidebar and simplify footer
+
+User-Prompt: please remove the navigation section
+User-Prompt: Cleanup the footer. Only keep the Asciidoctor logo and the text "Produced by Antora and Asciidoctor"
+User-Prompt: please center the contents of the footer as well
+```
+
+**Commit 2 - Blog Content:**
+```
+feat: create blog homepage and sample content
+
+User-Prompt: Please create a home.adoc as the landing page of the blog
+User-Prompt: lets set @preview-src/home.adoc as the home page in @preview-src/ui-model.yml
 ```
