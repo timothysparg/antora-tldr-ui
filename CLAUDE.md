@@ -40,6 +40,51 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
 - `preview-src/` - Sample content for local development preview
 - `gulp.d/` - Gulp task definitions and build utilities
 
+#### Template Architecture (Handlebars)
+
+**Layouts (`src/layouts/`):**
+- `default.hbs` - Main page layout template (includes head, header, body, footer)
+- `404.hbs` - Error page layout for 404 pages
+
+**Partials (`src/partials/`):**
+The partials are organized in a hierarchical structure:
+
+*Page Structure:*
+- `head.hbs` - Aggregates all head-related partials
+  - `head-prelude.hbs` - Early head content
+  - `head-title.hbs` - Page title generation
+  - `head-styles.hbs` - CSS stylesheet links
+  - `head-info.hbs` - Metadata and OpenGraph tags
+  - `head-meta.hbs` - Meta tags
+  - `head-scripts.hbs` - Head JavaScript includes
+  - `head-icons.hbs` - Favicon and icon links
+- `header.hbs` - Aggregates header components
+  - `header-scripts.hbs` - Header JavaScript
+  - `header-content.hbs` - Main navigation bar with logo, search, and menu
+- `body.hbs` - Main content wrapper
+  - `nav.hbs` - Left sidebar navigation container
+    - `nav-menu.hbs` - Component/version navigation menu
+    - `nav-explore.hbs` - Site exploration menu
+    - `nav-tree.hbs` - Hierarchical page navigation
+  - `main.hbs` - Article content area
+    - `toolbar.hbs` - Page tools (breadcrumbs, edit link, version selector)
+    - `toc.hbs` - Table of contents
+    - `article.hbs` - Main article content
+    - `article-404.hbs` - 404 error content
+- `footer.hbs` - Aggregates footer components
+  - `footer-content.hbs` - Footer links, branding, and legal information
+  - `footer-scripts.hbs` - Footer JavaScript includes
+
+*Component Partials:*
+- `breadcrumbs.hbs` - Navigation breadcrumb trail
+- `edit-this-page.hbs` - Edit page link functionality
+- `page-versions.hbs` - Version selector dropdown
+- `pagination.hbs` - Previous/next page navigation
+- `nav-toggle.hbs` - Mobile navigation toggle button
+
+*Template Composition:*
+The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose the final page structure. Each partial is focused on a specific UI component or functionality, allowing for modularity and maintainability.
+
 ### Key Technologies
 - **Handlebars**: Template engine for HTML generation
 - **PostCSS**: CSS processing with autoprefixer and cssnano
