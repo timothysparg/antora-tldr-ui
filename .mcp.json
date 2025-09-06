@@ -30,7 +30,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@executeautomation/playwright-mcp-server"
+        "@playwright/mcp@latest"
       ],
       "env": {
         "PLAYWRIGHT_HEADLESS": "true",

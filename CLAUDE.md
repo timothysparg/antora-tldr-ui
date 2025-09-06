@@ -93,6 +93,29 @@ This project is configured with Model Context Protocol (MCP) servers to enhance 
 - Provides enhanced tooling for browser automation, search, and documentation lookup
 - Integrates with Claude Code for improved development workflow
 
+### Development Preview and Screenshots
+To run the local development preview and take screenshots using the MCP Playwright server:
+
+1. **Start Development Server**:
+   ```bash
+   npm start
+   # or
+   npx gulp preview
+   ```
+   The server will be available at http://localhost:5252
+
+2. **Take Screenshots with Playwright MCP**:
+   - Use `mcp__playwright__browser_navigate` to open the local development server
+   - Use `mcp__playwright__browser_take_screenshot` to capture screenshots
+   - Screenshots are saved to `.playwright-mcp/` directory
+   - Example: Full page screenshot saved as `local-dev-homepage.png`
+   - Use `mcp__playwright__browser_close` to close the browser when finished
+
+3. **Development Server Management**:
+   - Server runs in background with live reload
+   - Changes to `src/` files automatically trigger browser refresh
+   - Use Ctrl+C to stop the development server
+
 ## Important Notes
 
 - Node.js version managed via `.mise.toml` (migrated from .nvmrc)
