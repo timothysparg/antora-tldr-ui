@@ -131,5 +131,5 @@ To run the local development preview and take screenshots using the MCP Playwrig
 - When committing follow the conventional commits syntax for commit messages
 - When committing add "Claude Code" as a Co-Author
 - When committing add The LLM Model (Sonnet, Opus, etc)
-- When committing add the prompt(s) that were given by the user
+- When committing add the prompts that were given by the user. Prefix the prompt with "User-Prompt:" If there are multiple prompts place each new prompt on a new line
 - When committing DO NOT ADD the Generated with Claude Code line
