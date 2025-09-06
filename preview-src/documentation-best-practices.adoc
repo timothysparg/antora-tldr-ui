@@ -1,0 +1,423 @@
+= Documentation Best Practices for Teams
+:page-description: Build a sustainable documentation culture that scales with your team and improves developer experience
+:page-author: Taylor Docs
+:page-date: 2024-11-28
+:page-tags: best-practices, team-culture, developer-experience, documentation
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.
+
+== Building a Documentation Culture
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Creating sustainable documentation practices requires more than just good tools—it requires a culture shift.
+
+=== The Documentation Mindset
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Foster these key attitudes in your team:
+
+[.mindset-principles]
+--
+.Documentation as Code
+Treat documentation with the same care and processes as source code—version control, code reviews, automated testing, and continuous integration.
+
+.User-Centric Thinking  
+Always write from the perspective of someone who doesn't have your context or expertise.
+
+.Iterative Improvement
+Documentation is never "finished"—it evolves with your product and user needs.
+
+.Ownership Mentality
+Everyone on the team has a responsibility to maintain and improve documentation quality.
+--
+
+=== Overcoming Common Resistance
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Address these common objections:
+
+[TIP]
+====
+.Handling "We Don't Have Time"
+Start with high-impact, low-effort documentation. Document decisions as you make them, and treat documentation as part of the development process, not an afterthought.
+====
+
+[NOTE]
+====
+.Managing "It's Obvious to Me"
+What's obvious to the author is rarely obvious to others. Use the "curse of knowledge" as a reminder to provide context and explanations.
+====
+
+== Structural Best Practices
+
+=== Information Architecture
+
+Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+
+.The Four Types of Documentation
+|===
+|Type |Purpose |Audience |Format
+
+|Tutorials
+|Learning-oriented
+|Beginners
+|Step-by-step guides
+
+|How-to Guides  
+|Problem-oriented
+|Intermediate users
+|Goal-focused instructions
+
+|Explanations
+|Understanding-oriented
+|All levels
+|Conceptual overviews
+
+|Reference
+|Information-oriented
+|Experts
+|Structured lookups
+|===
+
+=== Content Organization
+
+Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus:
+
+[,text]
+----
+docs/
+├── getting-started/           # Tutorials
+│   ├── index.adoc
+│   ├── installation.adoc
+│   └── first-project.adoc
+├── guides/                    # How-to guides
+│   ├── deployment.adoc
+│   ├── troubleshooting.adoc
+│   └── integration/
+├── concepts/                  # Explanations
+│   ├── architecture.adoc
+│   ├── design-principles.adoc
+│   └── terminology.adoc
+└── reference/                 # Reference material
+    ├── api/
+    ├── configuration.adoc
+    └── cli-commands.adoc
+----
+
+== Writing Excellence
+
+=== Clarity and Concision
+
+Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+
+[.writing-principles]
+--
+.Use Active Voice
+"Click the button" instead of "the button should be clicked."
+
+.Write Scannable Content
+Use headings, bullet points, and short paragraphs to improve readability.
+
+.Define Technical Terms
+Don't assume familiarity with jargon—provide definitions or links to glossaries.
+
+.Provide Context
+Explain why something matters, not just how to do it.
+--
+
+=== Code Documentation Standards
+
+[,python]
+----
+class DatabaseConnection:
+    """Manages database connections with automatic retry logic.
+    
+    This class handles connection pooling, automatic reconnection
+    on failure, and provides a context manager interface for
+    safe resource management.
+    
+    Examples:
+        Basic usage:
+        >>> with DatabaseConnection() as db:
+        ...     result = db.query("SELECT * FROM users")
+        
+        With custom configuration:
+        >>> config = ConnectionConfig(retry_count=5)
+        >>> db = DatabaseConnection(config)
+    
+    Attributes:
+        config: Connection configuration object
+        pool: Active connection pool instance
+        is_connected: Current connection status
+    """
+    
+    def __init__(self, config=None):
+        """Initialize database connection.
+        
+        Args:
+            config: Optional ConnectionConfig instance. If None,
+                   uses default configuration values.
+                   
+        Raises:
+            ConnectionError: If initial connection attempt fails
+            ConfigurationError: If config validation fails
+        """
+        pass
+----
+
+=== API Documentation
+
+Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+
+.REST API Documentation Template
+[,yaml]
+----
+paths:
+  /api/users/{userId}:
+    get:
+      summary: Retrieve user information
+      description: |
+        Returns detailed information about a specific user.
+        Requires authentication and appropriate permissions.
+        
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+            format: uuid
+            example: "123e4567-e89b-12d3-a456-426614174000"
+            
+      responses:
+        200:
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                username: "johndoe"
+                email: "john@example.com"
+                created_at: "2024-01-15T10:30:00Z"
+        404:
+          description: User not found
+        403:
+          description: Insufficient permissions
+----
+
+== Process and Workflow
+
+=== Documentation Reviews
+
+Ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Establish consistent review processes:
+
+[.review-checklist]
+--
+☐ **Accuracy**: Information is correct and up-to-date
+☐ **Completeness**: All necessary information is included  
+☐ **Clarity**: Content is easy to understand for the target audience
+☐ **Structure**: Information is logically organized
+☐ **Examples**: Code samples work and are relevant
+☐ **Links**: All references and cross-links function correctly
+☐ **Style**: Follows established writing guidelines
+--
+
+=== Maintenance Strategies
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.
+
+=== Automated Quality Checks
+
+[,bash]
+----
+#!/bin/bash
+# Documentation quality pipeline
+
+echo "Running documentation checks..."
+
+# Check for broken links
+echo "Checking links..."
+htmlproofer --check-html --check-img-http ./_site || exit 1
+
+# Validate spelling and grammar
+echo "Checking spelling..."
+cspell "**/*.adoc" || exit 1
+
+# Check for outdated content
+echo "Checking for outdated references..."
+grep -r "TODO\|FIXME\|OUTDATED" docs/ && exit 1
+
+# Validate code examples
+echo "Testing code examples..."
+python scripts/test_code_examples.py || exit 1
+
+echo "All checks passed!"
+----
+
+=== Update Triggers
+
+Set up systems to keep documentation current:
+
+* **Code changes**: Require documentation updates for API changes
+* **Feature releases**: Update user guides and tutorials
+* **Bug fixes**: Revise troubleshooting sections
+* **User feedback**: Address common questions and confusion
+* **Scheduled reviews**: Quarterly audits of high-traffic content
+
+== Measuring Success
+
+=== Key Metrics
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+
+[.metrics-grid]
+--
+.Usage Analytics
+Track page views, time on page, and user paths to identify popular content and drop-off points.
+
+.Support Ticket Reduction
+Monitor whether good documentation reduces support requests and improves user self-service.
+
+.Developer Onboarding Time
+Measure how quickly new team members become productive with your documentation.
+
+.Community Contributions
+Track external contributions to documentation as a sign of engagement and quality.
+--
+
+=== Feedback Loops
+
+[,html]
+----
+<!-- Embedded feedback widget -->
+<div class="docs-feedback">
+  <h4>Was this page helpful?</h4>
+  <div class="feedback-buttons">
+    <button class="feedback-yes" data-page="{{page.url}}">
+      👍 Yes
+    </button>
+    <button class="feedback-no" data-page="{{page.url}}">
+      👎 No
+    </button>
+  </div>
+  <div class="feedback-details" style="display: none;">
+    <textarea placeholder="Tell us how we can improve this page..."></textarea>
+    <button class="feedback-submit">Send Feedback</button>
+  </div>
+</div>
+----
+
+== Technology and Tools
+
+=== Tool Selection Criteria
+
+Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore:
+
+.Documentation Tool Evaluation Matrix
+|===
+|Feature |Weight |Markdown |AsciiDoc |Confluence |Notion
+
+|Learning Curve
+|High
+|5
+|3  
+|4
+|5
+
+|Version Control
+|Critical
+|5
+|5
+|2
+|2
+
+|Advanced Formatting
+|Medium  
+|3
+|5
+|4
+|4
+
+|Collaboration
+|High
+|3
+|4
+|5
+|5
+
+|API Integration
+|Medium
+|4
+|4
+|3
+|4
+|===
+
+=== Integration Ecosystem
+
+[,mermaid]
+----
+graph TB
+    A[Content Authors] --> B[Version Control]
+    B --> C[CI/CD Pipeline]
+    C --> D[Static Site Generator]
+    D --> E[Hosting Platform]
+    
+    F[Issue Tracker] --> G[Documentation Tasks]
+    G --> A
+    
+    H[User Analytics] --> I[Content Strategy]
+    I --> A
+    
+    J[Community Feedback] --> K[Content Updates]
+    K --> A
+----
+
+== Advanced Strategies
+
+=== Documentation as Product
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi.
+
+Treat your documentation like a product with:
+
+* **User research**: Understand your audience's needs and pain points
+* **Product roadmap**: Plan documentation features and improvements
+* **Success metrics**: Define and track meaningful KPIs
+* **Resource allocation**: Dedicate appropriate time and budget
+* **Continuous improvement**: Regular iteration based on feedback
+
+=== Scaling Documentation Teams
+
+[.scaling-strategies]
+--
+.Distributed Ownership
+Each team owns documentation for their domain while following organization-wide standards.
+
+.Documentation Champions
+Identify and empower documentation advocates within each team to drive local improvements.
+
+.Shared Resources
+Create reusable templates, style guides, and tools that teams can leverage.
+
+.Cross-Training
+Ensure multiple people can maintain critical documentation to avoid single points of failure.
+--
+
+== Conclusion
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Building excellent documentation practices requires commitment, the right processes, and continuous improvement.
+
+Remember that documentation is never a solved problem—it's an ongoing practice that evolves with your team, product, and users. Start with the fundamentals, measure your impact, and iterate based on real user needs.
+
+The investment in good documentation pays dividends in reduced support burden, faster onboarding, and happier users and team members. Make documentation a first-class citizen in your development process, and watch your team's productivity and user satisfaction improve.
+
+---
+
+_Published on November 28, 2024 by Taylor Docs_
+
+== Related Articles
+
+* xref:getting-started-asciidoc.adoc[Getting Started with AsciiDoc]
+* xref:advanced-formatting.adoc[Advanced Document Formatting Techniques]
+* xref:static-sites.adoc[Building Modern Static Sites with Antora]
