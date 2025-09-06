@@ -263,6 +263,7 @@ When working with Antora preview content and homepage configuration:
 - Before committing run `npx gulp lint` and `npx gulp format` and fix any issues before the commit can proceed
 - When committing follow the conventional commits syntax for commit messages
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
+- After committing changes, run the `/clear` command to clear the session context
 
 ## Commit Message Format
 
