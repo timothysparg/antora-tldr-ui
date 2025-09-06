@@ -1,0 +1,339 @@
+= Building Modern Static Sites with Antora
+:page-description: Learn how to create scalable, maintainable documentation sites using Antora and modern static site generation
+:page-author: Sam Builder
+:page-date: 2024-12-05
+:page-tags: antora, static-sites, jamstack, documentation
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Modern static site generators have revolutionized how we build and deploy documentation websites.
+
+== The Static Site Revolution
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Static sites offer numerous advantages over traditional server-rendered applications:
+
+=== Key Benefits
+
+* **Performance**: Duis aute irure dolor in reprehenderit in voluptate
+* **Security**: Velit esse cillum dolore eu fugiat nulla pariatur
+* **Scalability**: Excepteur sint occaecat cupidatat non proident
+* **Cost-effective**: Sunt in culpa qui officia deserunt mollit anim
+* **Developer Experience**: Id est laborum et dolorum fuga
+
+== Understanding Antora
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+
+=== Architecture Overview
+
+[,mermaid]
+----
+graph TD
+    A[Content Repositories] --> B[Antora Pipeline]
+    B --> C[Site Generation]
+    C --> D[Static HTML Output]
+    
+    B --> E[Component Discovery]
+    B --> F[Content Aggregation]
+    B --> G[Navigation Building]
+    B --> H[Cross-references Resolution]
+----
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+
+=== Core Concepts
+
+[.concept-grid]
+--
+.Components
+Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora.
+
+.Versions
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti.
+
+.Modules  
+Quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa.
+
+.Pages
+Qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est.
+--
+
+== Setting Up Your First Site
+
+=== Project Structure
+
+[,text]
+----
+my-docs-site/
+├── antora-playbook.yml          # <1>
+├── content/
+│   └── my-component/
+│       ├── antora.yml           # <2>
+│       └── modules/
+│           └── ROOT/
+│               ├── nav.adoc     # <3>
+│               └── pages/       # <4>
+│                   └── index.adoc
+└── ui-bundle/                   # <5>
+    └── build/
+        └── ui-bundle.zip
+----
+<1> Main site configuration
+<2> Component descriptor
+<3> Navigation definition
+<4> Content pages
+<5> UI theme bundle
+
+=== Configuration Essentials
+
+.Antora Playbook Configuration
+[,yaml]
+----
+site:
+  title: My Documentation Site
+  url: https://docs.myproject.org
+  start_page: my-component::index.adoc
+
+content:
+  sources:
+    - url: https://github.com/myorg/docs
+      branches: [main, v2.x, v1.x]
+      start_path: docs
+
+ui:
+  bundle:
+    url: ./ui-bundle.zip
+    snapshot: true
+
+output:
+  destinations:
+    - provider: fs
+      path: ./dist
+----
+
+Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+
+=== Component Configuration
+
+.Component Descriptor (antora.yml)
+[,yaml]
+----
+name: my-component
+title: My Component
+version: '2.1'
+display_version: '2.1.0'
+prerelease: false
+nav:
+  - modules/ROOT/nav.adoc
+  - modules/api/nav.adoc
+asciidoc:
+  attributes:
+    source-highlighter: highlight.js
+    listing-caption: Example
+----
+
+== Advanced Features
+
+=== Multi-Repository Documentation
+
+Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+
+[,yaml]
+----
+content:
+  sources:
+    # Main documentation
+    - url: https://github.com/myorg/main-docs
+      branches: [main, 'v*']
+    
+    # API documentation  
+    - url: https://github.com/myorg/api-docs
+      branches: [main]
+      start_path: docs
+    
+    # Community guides
+    - url: https://github.com/myorg/community
+      branches: [main]
+      start_path: guides
+----
+
+=== Cross-References and Navigation
+
+Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.
+
+[,asciidoc]
+----
+// Reference pages across components
+xref:api-component:ROOT:getting-started.adoc[API Getting Started]
+
+// Reference specific versions
+xref:2.0@my-component::configuration.adoc[v2.0 Configuration]
+
+// Reference external resources
+link:https://asciidoctor.org[Asciidoctor Homepage^]
+----
+
+=== Custom Extensions
+
+Omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.
+
+[,javascript]
+----
+// Custom Antora extension
+module.exports.register = function register (registry, context) {
+  registry.docinfoProcessor(function () {
+    this.process((doc, output) => {
+      if (doc.getAttribute('page-analytics')) {
+        return '<script>/* Analytics code */</script>'
+      }
+    })
+  })
+}
+----
+
+== Deployment Strategies
+
+=== Static Hosting Platforms
+
+.Hosting Comparison
+|===
+|Platform |Build Time |CDN |Custom Domain |Analytics
+
+|Netlify
+|Fast
+|Global
+|✓
+|Built-in
+
+|Vercel  
+|Very Fast
+|Global
+|✓
+|Built-in
+
+|GitHub Pages
+|Medium
+|GitHub CDN
+|✓
+|Third-party
+
+|AWS S3 + CloudFront
+|Custom
+|Global
+|✓
+|CloudWatch
+|===
+
+=== CI/CD Pipeline
+
+[,yaml]
+----
+# GitHub Actions deployment
+name: Build and Deploy
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * *'  # Daily rebuild
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install Antora
+        run: npm install -g @antora/cli @antora/site-generator
+        
+      - name: Generate site
+        run: antora generate antora-playbook.yml --fetch
+        
+      - name: Deploy to S3
+        run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }} --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+----
+
+== Performance Optimization
+
+=== Build Performance
+
+Ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Optimize your build times with these strategies:
+
+[.optimization-grid]
+--
+.Incremental Builds
+Cache unchanged content between builds to reduce processing time significantly.
+
+.Parallel Processing
+Leverage multiple CPU cores for faster content processing and asset optimization.
+
+.Content Splitting
+Organize large documentation sets into focused components for targeted builds.
+
+.Asset Optimization
+Compress images and optimize CSS/JS bundles for faster load times.
+--
+
+=== Runtime Performance
+
+[,javascript]
+----
+// Progressive enhancement example
+document.addEventListener('DOMContentLoaded', () => {
+  // Lazy load images
+  const images = document.querySelectorAll('img[data-src]');
+  const imageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        imageObserver.unobserve(img);
+      }
+    });
+  });
+  
+  images.forEach(img => imageObserver.observe(img));
+});
+----
+
+== Future-Proofing Your Site
+
+=== Content Architecture
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Design your content architecture for long-term maintainability:
+
+* **Modular structure**: Keep related content together
+* **Version management**: Plan for multiple product versions
+* **Reusable content**: Use partials and shared content blocks
+* **Consistent taxonomy**: Establish clear categorization systems
+
+=== Technology Evolution
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Stay prepared for technology changes:
+
+[WARNING]
+====
+Regular updates to dependencies and build tools are essential for security and performance. Plan quarterly reviews of your toolchain.
+====
+
+== Conclusion
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Static sites with Antora provide a powerful, scalable foundation for modern documentation.
+
+By leveraging modern build pipelines, thoughtful architecture, and performance optimization, you can create documentation sites that serve your users effectively while remaining maintainable for your team.
+
+---
+
+_Published on December 5, 2024 by Sam Builder_
+
+== Related Articles
+
+* xref:getting-started-asciidoc.adoc[Getting Started with AsciiDoc]
+* xref:advanced-formatting.adoc[Advanced Document Formatting Techniques]
+* xref:documentation-best-practices.adoc[Documentation Best Practices for Teams]

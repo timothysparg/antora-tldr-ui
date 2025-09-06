@@ -1,56 +1,61 @@
-= Home Page Title
+= Developer Blog
 :navtitle: Home
 :page-role: home
 
-Welcome to the home page!
+Welcome to our developer blog! Here you'll find articles about documentation, static site generation, and modern development practices.
 
-[.panel]
+== Latest Articles
+
+[.blog-post]
 --
-[discrete]
-== xref:home.adoc[First hero panel]
+=== xref:getting-started-asciidoc.adoc[Getting Started with AsciiDoc]
+_Posted on December 15, 2024_
 
-Content for hero panel.
---
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Learn how to write beautiful documentation with AsciiDoc's powerful markup syntax.
 
-[.panel]
---
-[discrete]
-== xref:home.adoc[Another hero panel]
-
-Content for hero panel.
+xref:getting-started-asciidoc.adoc[Read more →]
 --
 
-[discrete]
-=== Things
+[.blog-post]
+--
+=== xref:advanced-formatting.adoc[Advanced Document Formatting Techniques]
+_Posted on December 10, 2024_
 
-Introduction of things.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore. Discover professional formatting techniques for technical documentation.
 
-[.grid.has-emblems]
-Thing A [.emblem]#Emblem#::
-Description of thing A.
+xref:advanced-formatting.adoc[Read more →]
+--
 
-Thing B::
-Description of thing B.
+[.blog-post]
+--
+=== xref:static-sites.adoc[Building Modern Static Sites with Antora]
+_Posted on December 5, 2024_
 
-Thing C::
-Description of thing C.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem. Create scalable documentation sites with modern static site generators.
 
-[discrete]
-=== Explore topics
+xref:static-sites.adoc[Read more →]
+--
 
-[.grid]
-Topic A::
-Description of topic A.
+[.blog-post]
+--
+=== xref:documentation-best-practices.adoc[Documentation Best Practices for Teams]
+_Posted on November 28, 2024_
 
-* xref:#[Quicklink 1]
-* xref:#[Quicklink 2]
-* xref:#[Quicklink 3]
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Build a documentation culture that scales with your team and improves developer experience.
 
-Topic B::
-Description of topic B.
+xref:documentation-best-practices.adoc[Read more →]
+--
 
-Topic C::
-Description of topic C.
+== Categories
 
-Topic D::
-Description of topic D.
+[.categories]
+--
+* xref:#[Documentation] (3 posts)
+* xref:#[Static Sites] (2 posts)  
+* xref:#[Best Practices] (2 posts)
+* xref:#[AsciiDoc] (1 post)
+--
+
+== About This Blog
+
+This blog focuses on modern documentation practices, static site generation, and developer tools. We share insights, tutorials, and best practices to help developers create better documentation and more efficient workflows.

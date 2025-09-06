@@ -49,7 +49,7 @@ site:
 page:
   url: *home_url
   home: true
-  title: Brand&#8217;s Hardware &amp; Software Requirements
+  title: Developer Blog
   component: *component
   componentVersion: *component_version
   version: '5.2'

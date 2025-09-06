@@ -1,0 +1,277 @@
+= Advanced Document Formatting Techniques
+:page-description: Master professional formatting techniques for creating polished technical documentation
+:page-author: Alex Writer
+:page-date: 2024-12-10
+:page-tags: formatting, styling, advanced, techniques
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+
+== Professional Layout Techniques
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+
+=== Multi-Column Layouts
+
+[.cols-2]
+--
+.Column One
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+.Column Two
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+--
+
+Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.
+
+=== Custom Styling with Roles
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.
+
+[.highlight]
+--
+This is a highlighted content block that draws attention to important information using custom CSS roles.
+--
+
+[.sidebar]
+--
+.Pro Tip
+Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+--
+
+== Advanced Table Formatting
+
+=== Complex Table Structures
+
+.Feature Comparison Matrix
+[cols="2,1,1,1,3", options="header"]
+|===
+|Feature |Basic |Pro |Enterprise |Description
+
+.3+|Authentication
+|✓ |✓ |✓ |Basic login functionality
+| |✓ |✓ |Single sign-on (SSO)
+| | |✓ |Advanced security features
+
+.2+|Analytics  
+|Basic |Advanced |Enterprise |Usage tracking and reports
+| |✓ |✓ |Custom dashboard creation
+
+|Support
+|Email
+|Email + Chat
+|24/7 Premium
+|Available support channels
+|===
+
+=== Styled Tables
+
+[.zebra-stripes]
+|===
+|Technology |Learning Curve |Community |Use Case
+
+|React
+|Moderate
+|Excellent
+|Interactive UIs
+
+|Vue.js  
+|Easy
+|Good
+|Progressive enhancement
+
+|Angular
+|Steep
+|Good
+|Enterprise applications
+
+|Svelte
+|Easy
+|Growing
+|Performance-critical apps
+|===
+
+== Code Documentation
+
+=== Annotated Code Examples
+
+[,python]
+----
+class DocumentProcessor:
+    """Advanced document processing with formatting support."""
+    
+    def __init__(self, format_type='asciidoc'): # <1>
+        self.format_type = format_type
+        self.plugins = []
+    
+    def add_plugin(self, plugin):              # <2>
+        """Add a formatting plugin to the processor."""
+        self.plugins.append(plugin)
+    
+    def process(self, content):                # <3>
+        """Process content through all registered plugins."""
+        for plugin in self.plugins:
+            content = plugin.transform(content)
+        return content
+----
+<1> Initialize with the desired output format
+<2> Plugins allow extensible formatting capabilities  
+<3> Chain multiple transformations for complex formatting
+
+=== Interactive Examples
+
+.Before and After Comparison
+[cols="1,1", frame=none, grid=none]
+|===
+a|
+.Input
+[,asciidoc]
+----
+= My Document
+== Section
+Regular text with *bold*.
+----
+
+a|
+.Output  
+[,html]
+----
+<h1>My Document</h1>
+<h2>Section</h2>  
+<p>Regular text with <strong>bold</strong>.</p>
+----
+|===
+
+== Advanced Admonitions
+
+=== Custom Admonition Types
+
+[.performance]
+====
+.Performance Optimization
+Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.
+====
+
+[.security]  
+====
+.Security Consideration
+Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat.
+====
+
+=== Nested Information Blocks
+
+[TIP]
+====
+.Advanced Formatting Tips
+
+1. Use semantic markup for better accessibility
+2. Leverage CSS custom properties for theming
+3. Test rendering across multiple output formats
+
+[NOTE]
+--
+Nested admonitions help organize complex information hierarchically while maintaining readability.
+--
+====
+
+== Responsive Design Considerations
+
+=== Mobile-First Content
+
+[.mobile-friendly]
+--
+.Key Principles
+
+* Keep line lengths readable on small screens
+* Use appropriate heading hierarchy
+* Ensure touch-friendly interactive elements
+* Optimize images for different screen densities
+--
+
+=== Progressive Enhancement
+
+[.cols-responsive]
+|===
+|Feature |Mobile |Tablet |Desktop
+
+|Navigation
+|Hamburger menu
+|Sidebar collapse
+|Full navigation
+
+|Content Layout  
+|Single column
+|Two columns
+|Multi-column
+
+|Typography
+|16px base
+|17px base  
+|18px base
+
+|Interactive Elements
+|Touch-optimized
+|Hybrid input
+|Mouse-optimized
+|===
+
+== Integration with Modern Toolchains
+
+=== Build Pipeline Integration
+
+[,yaml]
+----
+# GitHub Actions workflow for documentation
+name: Build Documentation
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Asciidoctor
+        run: gem install asciidoctor
+      - name: Build documentation
+        run: asciidoctor -D output src/*.adoc
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+----
+
+=== Automated Quality Checks
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Implement automated formatting validation to ensure consistent output quality across your documentation projects.
+
+[,bash]
+----
+#!/bin/bash
+# Quality check script
+echo "Running documentation quality checks..."
+
+# Check for broken links
+htmlproofer --check-html --check-img-http ./_site
+
+# Validate HTML output
+tidy -q -e *.html
+
+# Check accessibility
+pa11y http://localhost:4000
+----
+
+== Conclusion
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Advanced formatting techniques enable you to create professional, accessible, and maintainable documentation.
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. These techniques form the foundation for scalable documentation systems that grow with your project.
+
+---
+
+_Published on December 10, 2024 by Alex Writer_
+
+== Related Articles
+
+* xref:getting-started-asciidoc.adoc[Getting Started with AsciiDoc]
+* xref:static-sites.adoc[Building Modern Static Sites with Antora]
+* xref:documentation-best-practices.adoc[Documentation Best Practices for Teams]
