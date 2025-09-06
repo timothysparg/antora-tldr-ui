@@ -161,6 +161,62 @@ To run the local development preview and take screenshots using the MCP Playwrig
    - Changes to `src/` files automatically trigger browser refresh
    - Use Ctrl+C to stop the development server
 
+### UI Modification and Validation Workflow
+
+When modifying UI elements, follow this systematic approach to find, change, and verify modifications:
+
+#### 1. **Finding UI Elements in Templates**
+- **Text Search**: Use `Grep` tool to search for visible text across the codebase
+  ```bash
+  # Example: Finding "Edit this Page" functionality
+  Grep pattern:"Edit this Page" path:src output_mode:files_with_matches
+  ```
+- **Template Investigation**: Examine found files to understand component structure
+- **Dependency Mapping**: Search for partial inclusions to trace where components are used
+  ```bash
+  # Example: Finding where edit-this-page partial is included
+  Grep pattern:"edit-this-page" path:src output_mode:content
+  ```
+
+#### 2. **Making Template Changes**
+- **Targeted Modification**: Edit the specific template file (e.g., `src/partials/toolbar.hbs`)
+- **Clean Removal**: Remove unwanted elements completely rather than commenting out
+- **Preserve Structure**: Maintain proper Handlebars syntax and template hierarchy
+
+#### 3. **Validation with Playwright MCP**
+- **Before/After Comparison**: 
+  - Take accessibility snapshot and screenshot before changes
+  - Make modifications to templates
+  - Take new accessibility snapshot and screenshot after changes
+  - Compare structural differences in the accessibility tree
+
+- **Verification Process**:
+  ```bash
+  # Navigate to development server
+  mcp__playwright__browser_navigate url:http://localhost:5252
+  
+  # Capture current state
+  mcp__playwright__browser_snapshot  # Accessibility tree structure
+  mcp__playwright__browser_take_screenshot filename:preview-output/modified-ui.png
+  
+  # Close browser
+  mcp__playwright__browser_close
+  ```
+
+- **Documentation**: Save verification artifacts to `preview-output/` directory:
+  - Screenshots showing visual changes
+  - Accessibility snapshots showing structural modifications
+  - Comparison files documenting before/after states
+
+#### 4. **Change Validation Checklist**
+- ✅ Target element is completely absent from accessibility tree
+- ✅ No broken layout or spacing issues visible in screenshot
+- ✅ Related functionality still works correctly
+- ✅ Template structure remains valid and clean
+- ✅ Development server auto-reload reflects changes immediately
+
+This workflow ensures systematic UI modifications with proper validation and documentation of changes.
+
 ## Important Notes
 
 - Node.js version managed via `.mise.toml` (migrated from .nvmrc)
@@ -177,4 +233,5 @@ To run the local development preview and take screenshots using the MCP Playwrig
 - When committing add "Claude Code" as a Co-Author
 - When committing add The LLM Model (Sonnet, Opus, etc)
 - When committing add the the original prompt and all subsequent user requests. Prefix the prompt with "User-Prompt:" If there are multiple prompts place each new prompt on a new line
+- DO NOT save prompt messages from the user that instructs Claude to save or commit the set of changes (e.g., "save these changes", "commit this", "please commit")
 - When committing DO NOT ADD the Generated with Claude Code line
