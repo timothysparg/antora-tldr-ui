@@ -234,4 +234,5 @@ This workflow ensures systematic UI modifications with proper validation and doc
 - When committing add The LLM Model (Sonnet, Opus, etc)
 - When committing add the the original prompt and all subsequent user requests. Prefix the prompt with "User-Prompt:" If there are multiple prompts place each new prompt on a new line
 - DO NOT save prompt messages from the user that instructs Claude to save or commit the set of changes (e.g., "save these changes", "commit this", "please commit")
+- If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 - When committing DO NOT ADD the Generated with Claude Code line
