@@ -229,6 +229,7 @@ This workflow ensures systematic UI modifications with proper validation and doc
 
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @README.adoc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @CLAUDE.md
+- Before committing run `npx gulp lint` and `npx gulp format` and fix any issues before the commit can proceed
 - When committing follow the conventional commits syntax for commit messages
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 
