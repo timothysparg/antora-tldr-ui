@@ -9,7 +9,7 @@ Welcome to our developer blog! Here you'll find articles about documentation, st
 [frame="none", grid="none", cols="1a,1a"]
 |===
 |
-.Getting Started with AsciiDoc
+xref:getting-started-asciidoc.adoc[Getting Started with AsciiDoc]
 ****
 _Posted on December 15, 2024_
 
@@ -18,7 +18,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor i
 xref:getting-started-asciidoc.adoc[Read more →]
 ****
 |
-.Advanced Document Formatting Techniques
+xref:advanced-formatting.adoc[Advanced Document Formatting Techniques]
 ****
 _Posted on December 10, 2024_
 
@@ -27,7 +27,7 @@ Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliqu
 xref:advanced-formatting.adoc[Read more →]
 ****
 |
-.Building Modern Static Sites with Antora
+xref:static-sites.adoc[Building Modern Static Sites with Antora]
 ****
 _Posted on December 5, 2024_
 
@@ -36,7 +36,7 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
 xref:static-sites.adoc[Read more →]
 ****
 |
-.Documentation Best Practices for Teams
+xref:documentation-best-practices.adoc[Documentation Best Practices for Teams]
 ****
 _Posted on November 28, 2024_
 
