@@ -26,8 +26,8 @@ endif::[]
 :url-git-dl: {url-git}/downloads
 :url-opendevise: https://opendevise.com
 :url-nodejs: https://nodejs.org
-:url-nvm: https://github.com/creationix/nvm
-:url-nvm-install: {url-nvm}#installation
+:url-mise: https://mise.jdx.dev
+:url-mise-install: {url-mise}/getting-started.html
 :url-source-maps: https://developer.mozilla.org/en-US/docs/Tools/Debugger/How_to/Use_a_source_map
 
 ifdef::badges[]
@@ -97,24 +97,19 @@ If this command fails with an error, you don't have Node.js installed.
 If the command doesn't report an active LTS version of Node.js (e.g., v16.16.0), it means you don't have a suitable version of Node.js installed.
 In this guide, we'll be installing Node.js 16.
 
-While you can install Node.js from the official packages, we strongly recommend that you use {url-nvm}[nvm] (Node Version Manager) to manage your Node.js installation(s).
-Follow the {url-nvm-install}[nvm installation instructions] to set up nvm on your machine.
+While you can install Node.js from the official packages, we strongly recommend that you use {url-mise}[Mise] (polyglot runtime manager) to manage your Node.js installation(s).
+Follow the {url-mise-install}[Mise installation instructions] to set up Mise on your machine.
 
-Once you've installed nvm, open a new terminal and install Node.js 16 using the following command:
+Once you've installed Mise, open a new terminal and install Node.js using the following command (the project's .mise.toml file specifies the required version):
 
- $ nvm install 16
+ $ mise install
 
-You can switch to this version of Node.js at any time using the following command:
-
- $ nvm use 16
-
-To make Node.js 16 the default in new terminals, type:
-
- $ nvm alias default 16
+Mise will automatically use the correct Node.js version when you're in the project directory.
+The Node.js version is managed via the .mise.toml file in the project root.
 
 Now that you have Node.js installed, you can proceed with cloning and initializing the project.
 
-=== Clone and Initialize the UI Project
+=== Clone and Initialize the UI Projectc
 
 Clone the UI project using git:
 

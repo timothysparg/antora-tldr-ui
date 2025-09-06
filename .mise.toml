@@ -1,0 +1,3 @@
+[tools]
+# Use latest LTS version of Node.js
+node = "lts"
