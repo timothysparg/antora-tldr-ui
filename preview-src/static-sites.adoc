@@ -24,7 +24,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 
 === Architecture Overview
 
-[,mermaid]
+[mermaid]
 ----
 graph TD
     A[Content Repositories] --> B[Antora Pipeline]
