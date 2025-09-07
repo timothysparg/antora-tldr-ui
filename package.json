@@ -24,6 +24,7 @@
     "@fontsource/roboto-mono": "~5.0",
     "@octokit/rest": "~19.0",
     "@vscode/gulp-vinyl-zip": "~2.5",
+    "asciidoctor-kroki": "^0.18.1",
     "autoprefixer": "~10.4",
     "browser-pack-flat": "~3.5",
     "browserify": "~17.0",

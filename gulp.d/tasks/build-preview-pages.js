@@ -1,6 +1,11 @@
 'use strict'
 
 const Asciidoctor = require('@asciidoctor/core')()
+const kroki = require('asciidoctor-kroki')
+
+// Create extension registry and register kroki extension
+const registry = Asciidoctor.Extensions.create()
+kroki.register(registry)
 const fs = require('node:fs')
 const { promises: fsp } = fs
 const handlebars = require('handlebars')
@@ -13,7 +18,13 @@ const map = (transform = () => {}, flush = undefined) => new Transform({ objectM
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
-const ASCIIDOC_ATTRIBUTES = { experimental: '', icons: 'font', sectanchors: '', 'source-highlighter': 'highlight.js' }
+const ASCIIDOC_ATTRIBUTES = {
+  experimental: '',
+  icons: 'font',
+  sectanchors: '',
+  'source-highlighter': 'highlight.js',
+  'kroki-server-url': 'https://kroki.io',
+}
 
 module.exports =
   (src, previewSrc, previewDest, sink = () => map()) =>
@@ -40,7 +51,11 @@ module.exports =
                 if (file.stem === '404') {
                   uiModel.page = { layout: '404', title: 'Page Not Found' }
                 } else {
-                  const doc = Asciidoctor.load(file.contents, { safe: 'safe', attributes: ASCIIDOC_ATTRIBUTES })
+                  const doc = Asciidoctor.load(file.contents, {
+                    safe: 'safe',
+                    attributes: ASCIIDOC_ATTRIBUTES,
+                    extension_registry: registry,
+                  })
                   uiModel.page.attributes = Object.entries(doc.getAttributes())
                     .filter(([name, val]) => name.startsWith('page-'))
                     .reduce((accum, [name, val]) => {
