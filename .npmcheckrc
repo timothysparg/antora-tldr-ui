@@ -1,0 +1,9 @@
+{
+  "depcheck": {
+    "ignoreMatches": [
+      "@fontsource/roboto",
+      "@fontsource/roboto-mono",
+      "@fontsource/comfortaa"
+    ]
+  }
+}
