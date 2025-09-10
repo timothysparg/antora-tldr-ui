@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import copy from 'rollup-plugin-copy'
 
 export default defineConfig({
   root: '.',
@@ -48,5 +49,42 @@ export default defineConfig({
     }
   },
   
-  plugins: []
+  plugins: [
+    copy({
+      targets: [
+        // Copy Handlebars layouts
+        {
+          src: 'src/layouts/*.hbs',
+          dest: 'build-vite/layouts'
+        },
+        // Copy Handlebars partials
+        {
+          src: 'src/partials/*.hbs',
+          dest: 'build-vite/partials'
+        },
+        // Copy Handlebars helpers
+        {
+          src: 'src/helpers/*.js',
+          dest: 'build-vite/helpers'
+        },
+        // Copy vendor CSS files
+        {
+          src: 'src/css/vendor/*.css',
+          dest: 'build-vite/css/vendor'
+        },
+        // Copy vendor JS files
+        {
+          src: 'src/js/vendor/*.js',
+          dest: 'build-vite/js/vendor'
+        },
+        // Copy static files if they exist (optional)
+        ...(require('fs').existsSync('src/static') ? [{
+          src: 'src/static/**/*',
+          dest: 'build-vite/',
+          dot: true
+        }] : [])
+      ],
+      hook: 'writeBundle'
+    })
+  ]
 })
