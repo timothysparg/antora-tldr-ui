@@ -9,6 +9,7 @@ module.exports = (collection, property, orderSpec) => {
     .filter((it) => {
       if (it.charAt() !== '!') return true
       sourceCollection.delete(it.slice(1))
+      return false
     })
   const restIdx = order.indexOf('*')
   if (~restIdx) order.splice(restIdx, 1)
