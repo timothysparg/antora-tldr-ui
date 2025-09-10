@@ -1,5 +1,4 @@
 /build/
-/build-vite/
 /node_modules/
 /public/
 /.playwright-mcp/
