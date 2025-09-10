@@ -38,6 +38,25 @@ export default defineConfig({
         })
       }
     }
+    ,
+    // Serve bundled vendor scripts from the main build output for preview
+    {
+      name: 'serve-bundled-vendor',
+      configureServer(server) {
+        const path = require('path')
+        const fs = require('fs')
+        server.middlewares.use((req, res, next) => {
+          if (req.url?.startsWith('/js/vendor/')) {
+            const filePath = path.join(__dirname, '..', 'build', req.url)
+            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+              res.setHeader('Content-Type', 'application/javascript')
+              return fs.createReadStream(filePath).pipe(res)
+            }
+          }
+          next()
+        })
+      }
+    }
   ],
   
   server: {
@@ -57,6 +76,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': resolve(__dirname, '..'),
+      '/js/vendor': resolve(__dirname, '../build/js/vendor'),
       '/css': resolve(__dirname, '../src/css'),
       '/js': resolve(__dirname, '../src/js')
     }

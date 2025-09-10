@@ -14,7 +14,9 @@ export default defineConfig({
       input: {
         'js/site': resolve(__dirname, 'src/js/site.js'),
         'site': resolve(__dirname, 'src/css/site.css'),
-        'home': resolve(__dirname, 'src/css/home.css')
+        'home': resolve(__dirname, 'src/css/home.css'),
+        'js/vendor/tabs.bundle': resolve(__dirname, 'src/js/vendor/tabs.esm.js'),
+        'js/vendor/highlight.bundle': resolve(__dirname, 'src/js/vendor/highlight.esm.js')
       },
       output: {
         entryFileNames: '[name].js',
@@ -121,11 +123,7 @@ export default defineConfig({
           src: 'src/css/vendor/*.css',
           dest: 'build/css/vendor'
         },
-        // Copy vendor JS files
-        {
-          src: 'src/js/vendor/*.js',
-          dest: 'build/js/vendor'
-        },
+        // Note: vendor JS is now bundled via Vite entry points above
         // Copy images (including favicon)
         {
           src: 'src/img/**/*.{png,jpg,jpeg,gif,svg,ico}',
