@@ -15,7 +15,8 @@
     "lint": "gulp lint",
     "clean": "gulp clean",
     "build:vite": "vite build",
-    "dev:vite": "npx gulp preview:build && vite"
+    "dev:vite": "npx gulp preview:build && vite",
+    "bundle:vite": "npx gulp clean && npx gulp lint && vite build"
   },
   "engines": {
     "node": ">=16.0.0"
