@@ -110,15 +110,15 @@ export default function previewSitePlugin () {
           const htmlPath = req.url
           const adocFileName = path.basename(htmlPath, '.html') + '.adoc'
           const adocPath = path.join(server.config.root, adocFileName)
-          
+
           if (fs.existsSync(adocPath)) {
             try {
               const content = fs.readFileSync(adocPath, 'utf8')
               const html = await processAsciiDoc(content, adocPath)
-              
+
               // Extract the actual HTML from the export statement
               const htmlContent = JSON.parse(html.replace('export default ', ''))
-              
+
               res.setHeader('Content-Type', 'text/html')
               res.end(htmlContent)
               return
