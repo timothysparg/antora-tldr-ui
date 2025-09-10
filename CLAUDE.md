@@ -202,13 +202,13 @@ When modifying UI elements, follow this systematic approach to find, change, and
   
   # Capture current state
   mcp__playwright__browser_snapshot  # Accessibility tree structure
-  mcp__playwright__browser_take_screenshot filename:preview-output/modified-ui.png
+  mcp__playwright__browser_take_screenshot filename:.playwright-mcp/modified-ui.png
   
   # Close browser
   mcp__playwright__browser_close
   ```
 
-- **Documentation**: Save verification artifacts to `preview-output/` directory:
+- **Documentation**: Save verification artifacts to `.playwright-mcp/` directory:
   - Screenshots showing visual changes
   - Accessibility snapshots showing structural modifications
   - Comparison files documenting before/after states
