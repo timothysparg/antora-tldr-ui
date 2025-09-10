@@ -16,7 +16,7 @@ export default defineConfig({
   },
   
   build: {
-    outDir: '../dist-preview',
+    outDir: '../preview-dist',
     emptyOutDir: true,
     rollupOptions: {
       input: resolve(__dirname, 'index.html')
