@@ -271,8 +271,9 @@ Commit messages must follow this exact structure:
 
 1. **Subject line**: Conventional commits format (e.g., "feat:", "fix:", "refactor:")
 2. **Body**: Detailed description of changes (optional)
-3. **User-Prompt section**: Original user request(s) - second to last
-4. **Co-Authors section**: Attribution - must be the last lines
+3. **Plan section**: When working from a plan (e.g., plan.md), include relevant plan details - third to last
+4. **User-Prompt section**: Original user request(s) - second to last  
+5. **Co-Authors section**: Attribution - must be the last lines
 
 ### User-Prompt Section
 - **CRITICAL**: Include user prompts and requests that are relevant to the specific changes being committed
@@ -290,6 +291,20 @@ Commit messages must follow this exact structure:
   User-Prompt: please remove the navigation section  
   User-Prompt: please remove the breadcrumbs section
   User-Prompt: now we just have an empty toolbar, lets remove that as well
+  ```
+
+### Plan Section
+- **When to include**: Include when working from a structured plan (e.g., plan.md)
+- **Format**: Use "Plan:" prefix followed by indented plan details
+- **Content**: Include specific plan section and task checklist status
+- **Example format**:
+  ```
+  Plan: Commit 1 - Add Vite Dependencies and Basic Configuration
+    ✅ Add Vite and related dependencies to package.json
+    ✅ Add standardized npm scripts to package.json  
+    ✅ Run npm install successfully
+    ✅ Ensure existing Gulp build still works
+    ✅ Run validation tests - all pass
   ```
 
 ### Co-Authors Section  
