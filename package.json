@@ -8,15 +8,16 @@
     "url": "https://github.com/timothysparg/antora-tldr-ui"
   },
   "scripts": {
-    "start": "gulp preview",
-    "dev": "gulp preview",
-    "build": "gulp bundle",
-    "preview": "gulp preview",
+    "start": "npm run dev",
+    "dev": "npx gulp preview:build && vite",
+    "build": "npx gulp clean && npx gulp lint && vite build",
+    "preview": "vite preview",
+    "bundle": "npm run build",
     "lint": "gulp lint",
     "clean": "gulp clean",
-    "build:vite": "vite build",
-    "dev:vite": "npx gulp preview:build && vite",
-    "bundle:vite": "npx gulp clean && npx gulp lint && vite build"
+    "build:gulp": "gulp bundle",
+    "dev:gulp": "gulp preview",
+    "preview:gulp": "gulp preview"
   },
   "engines": {
     "node": ">=16.0.0"

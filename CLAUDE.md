@@ -9,25 +9,28 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
 ## Development Commands
 
 ### Common Development Tasks
-- `npm start` or `npx gulp preview` - Start development server with live reload at http://localhost:5252
-- `npx gulp bundle` - Build and bundle the UI for production (creates build/ui-bundle.zip)
-- `npx gulp lint` - Run both CSS and JavaScript linting
-- `npx gulp lint:css` - Lint CSS files using stylelint
-- `npx gulp lint:js` - Lint JavaScript files using eslint
+- `npm start` or `npm run dev` - Start Vite development server with HMR at http://localhost:5252
+- `npm run build` - Build and bundle the UI for production (creates build/ui-bundle.zip)
+- `npm run bundle` - Alias for build command
+- `npm run preview` - Preview production build using Vite preview server
+- `npm run lint` - Run both CSS and JavaScript linting (still uses Gulp)
+- `npm run clean` - Clean build artifacts (still uses Gulp)
 - `npx gulp format` - Format JavaScript files using prettier-eslint
-- `npx gulp clean` - Clean build artifacts
 
-### Advanced Commands
-- `npx gulp bundle:pack` - Pack UI bundle without running full build pipeline
+### Legacy Gulp Commands (maintained for compatibility)
+- `npm run build:gulp` - Build using original Gulp pipeline
+- `npm run dev:gulp` - Development server using Gulp
+- `npm run preview:gulp` - Preview using Gulp server
 - `npx gulp release` - Bundle and publish to GitHub (CI only)
-- `SOURCEMAPS=true npx gulp bundle` - Create bundle with source maps for debugging
 
 ## Architecture
 
 ### Build System
-- **Gulp**: Primary build tool with tasks defined in gulpfile.js
-- **Task Organization**: Individual gulp tasks are in gulp.d/tasks/ directory
-- **Configuration**: Build targets different directories based on environment (build/ for production, public/dist/ for deploy previews)
+- **Vite**: Modern build tool and development server with HMR (Hot Module Replacement)
+- **Configuration**: Build configuration in vite.config.js
+- **Development**: Fast Vite dev server with instant updates and optimized bundling  
+- **Production**: Optimized bundles with CSS/JS minification and font/asset copying
+- **Legacy Gulp**: Maintained for linting, cleaning, and release tasks (gulpfile.js, gulp.d/tasks/)
 
 ### Source Structure
 - `src/` - Main source directory containing all UI assets
@@ -86,9 +89,10 @@ The partials are organized in a hierarchical structure:
 The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose the final page structure. Each partial is focused on a specific UI component or functionality, allowing for modularity and maintainability.
 
 ### Key Technologies
-- **Handlebars**: Template engine for HTML generation
+- **Vite**: Modern build tool and development server with HMR
+- **Rollup**: JavaScript bundling (via Vite)
 - **PostCSS**: CSS processing with autoprefixer and cssnano
-- **Browserify**: JavaScript bundling
+- **Handlebars**: Template engine for HTML generation (templates copied to bundle)
 - **Highlight.js**: Syntax highlighting (version 9.18.3 specifically)
 - **Asciidoctor**: Content processing (@asciidoctor/core ~2.2)
 
@@ -109,14 +113,15 @@ The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose 
 
 ### Local Development
 1. Run `npm ci` to install dependencies
-2. Use `npm start` to launch development server
-3. Edit files in `src/` directory - changes auto-reload in browser
+2. Use `npm start` to launch Vite development server with HMR
+3. Edit files in `src/` directory - changes auto-reload instantly in browser
 4. Preview content is in `preview-src/` directory for testing
 
 ### Bundle Creation
-1. Lint code passes (`npx gulp lint`)
-2. Build process consolidates CSS into `site.css` and JS into `site.js`
-3. Final bundle is created as `build/ui-bundle.zip`
+1. Run `npm run build` - includes linting, cleaning, and bundling
+2. Vite processes and optimizes CSS into `site.css` and JS into `site.js`
+3. All assets (fonts, images, templates) are copied to correct bundle structure
+4. Final bundle is created as `build/ui-bundle.zip`
 
 ### Release Process
 - Automated via GitHub Actions on pushes to main branch
