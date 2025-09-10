@@ -135,17 +135,19 @@ The files in the [.path]_preview-src/_ folder provide the sample content that al
 In this folder, you'll primarily find pages written in AsciiDoc.
 These pages provide a representative sample and kitchen sink of content from the real site.
 
-To build the UI and preview it in a local web server, run the `preview` command:
-
- $ npx gulp preview
-
-[TIP]
-====
-Alternatively, you can use the following command:
+To build the UI and preview it in a local web server, run the development server:
 
  $ npm start
 
-When using `npm start`, you don't have to prefix the `npm` command with `npx`.
+This command builds the preview pages and starts Vite's development server with Hot Module Replacement (HMR) for fast development.
+
+[TIP]
+====
+You can also use the `dev` command directly:
+
+ $ npm run dev
+
+The development server uses Vite for fast builds and automatic browser refresh when files change.
 ====
 
 You'll see a URL listed in the output of this command:
@@ -167,18 +169,19 @@ Press kbd:[Ctrl+C] to stop the preview server and end the continuous build.
 
 If you need to package the UI so you can use it to generate the documentation site locally, run the following command:
 
- $ npx gulp bundle
+ $ npm run build
 
+This command runs linting, cleans previous builds, and creates the production bundle using Vite.
 If any errors are reported by lint, you'll need to fix them.
 
 When the command completes successfully, the UI bundle will be available at [.path]_build/ui-bundle.zip_.
 You can point Antora at this bundle using the `--ui-bundle-url` command-line option.
 
-If you have the preview running, and you want to bundle without causing the preview to be clobbered, use:
+Alternatively, you can use the `bundle` command:
 
- $ npx gulp bundle:pack
+ $ npm run bundle
 
-The UI bundle will again be available at [.path]_build/ui-bundle.zip_.
+Both commands produce the same ui-bundle.zip file.
 
 ==== Source Maps
 
@@ -189,12 +192,10 @@ This "`source mapping`" is accomplished by generating additional map files that 
 These map files sit adjacent to the combined files in the build folder.
 The mapping they provide allows the debugger to present the original source rather than the obfuscated file, an essential tool for debugging.
 
-In preview mode, source maps are enabled automatically, so there's nothing you have to do to make use of them.
-If you need to include source maps in the bundle, you can do so by setting the `SOURCEMAPS` environment varible to `true` when you run the bundle command:
+In development mode, source maps are enabled automatically by Vite for fast debugging.
+For production builds, Vite optimizes the bundle without source maps by default.
 
- $ SOURCEMAPS=true npx gulp bundle
-
-In this case, the bundle will include the source maps, which can be used for debuggging your production site.
+If you need to include source maps in the production bundle for debugging, you can modify the Vite configuration in [.path]_vite.config.js_ to enable source maps in production builds.
 
 === Create an Online Preview
 

@@ -7,7 +7,7 @@ export default defineConfig({
   root: '.',
   
   build: {
-    outDir: 'build-vite',
+    outDir: 'build',
     emptyOutDir: true,
     
     rollupOptions: {
@@ -62,37 +62,74 @@ export default defineConfig({
   },
   
   plugins: [
+    // Custom plugin to serve index.html for root requests and handle asset requests
+    {
+      name: 'serve-assets',
+      configureServer(server) {
+        const path = require('path')
+        const fs = require('fs')
+        
+        server.middlewares.use((req, res, next) => {
+          if (req.url === '/') {
+            req.url = '/index.html'
+          } else if (req.url?.startsWith('/_/')) {
+            // Serve assets from public/_ directory
+            const filePath = path.join(process.cwd(), 'public', req.url)
+            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+              const ext = path.extname(filePath).toLowerCase()
+              let mimeType = 'application/octet-stream'
+              
+              // Set appropriate MIME types
+              if (ext === '.css') mimeType = 'text/css'
+              else if (ext === '.js') mimeType = 'application/javascript'
+              else if (ext === '.png') mimeType = 'image/png'
+              else if (ext === '.jpg' || ext === '.jpeg') mimeType = 'image/jpeg'
+              else if (ext === '.gif') mimeType = 'image/gif'
+              else if (ext === '.svg') mimeType = 'image/svg+xml'
+              else if (ext === '.ico') mimeType = 'image/x-icon'
+              else if (ext === '.woff') mimeType = 'font/woff'
+              else if (ext === '.woff2') mimeType = 'font/woff2'
+              else if (ext === '.ttf') mimeType = 'font/ttf'
+              
+              res.setHeader('Content-Type', mimeType)
+              return fs.createReadStream(filePath).pipe(res)
+            }
+          }
+          next()
+        })
+      }
+    },
     copy({
       targets: [
         // Copy Handlebars layouts
         {
           src: 'src/layouts/*.hbs',
-          dest: 'build-vite/layouts'
+          dest: 'build/layouts'
         },
         // Copy Handlebars partials
         {
           src: 'src/partials/*.hbs',
-          dest: 'build-vite/partials'
+          dest: 'build/partials'
         },
         // Copy Handlebars helpers
         {
           src: 'src/helpers/*.js',
-          dest: 'build-vite/helpers'
+          dest: 'build/helpers'
         },
         // Copy vendor CSS files
         {
           src: 'src/css/vendor/*.css',
-          dest: 'build-vite/css/vendor'
+          dest: 'build/css/vendor'
         },
         // Copy vendor JS files
         {
           src: 'src/js/vendor/*.js',
-          dest: 'build-vite/js/vendor'
+          dest: 'build/js/vendor'
         },
         // Copy images (including favicon)
         {
           src: 'src/img/**/*.{png,jpg,jpeg,gif,svg,ico}',
-          dest: 'build-vite/img'
+          dest: 'build/img'
         },
         // Copy fonts from node_modules
         {
@@ -112,19 +149,19 @@ export default defineConfig({
             'node_modules/@fontsource/comfortaa/files/comfortaa-latin-400-normal.woff',
             'node_modules/@fontsource/comfortaa/files/comfortaa-latin-400-normal.woff2'
           ],
-          dest: 'build-vite/font'
+          dest: 'build/font'
         },
         // Copy static files if they exist (optional)
         ...(require('fs').existsSync('src/static') ? [{
           src: 'src/static/**/*',
-          dest: 'build-vite/',
+          dest: 'build/',
           dot: true
         }] : [])
       ],
       hook: 'writeBundle'
     }),
     zipPack({
-      inDir: 'build-vite',
+      inDir: 'build',
       outDir: 'build',
       outFileName: 'ui-bundle.zip'
     })
