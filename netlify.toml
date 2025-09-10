@@ -1,13 +1,13 @@
 [build]
 publish = "preview-dist"
-command = "npx gulp preview:build"
+command = "npm run preview"
 
 [build.environment]
 CI = "true"
 NODE_VERSION = "16"
 
 [context.deploy-preview]
-command = "npx gulp preview:build && npx gulp --series build bundle:pack"
+command = "npm run preview && npm run build"
 
 [[headers]]
 for = "/_/font/*"
