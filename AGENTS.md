@@ -312,11 +312,26 @@ Commit messages must follow this exact structure:
   ```
 
 ### Co-Authors Section  
-- Must be the final lines of the commit message (if used)
-- Add two Co-Authors: your assistant identity and the model/runtime used (if applicable)
-- Avoid vendor-branded boilerplate lines; attribution should be concise and relevant
+- Must be the final lines of the commit message.
+- Use exactly two lines per assistant used, chosen from the Attribution Registry below.
+- If multiple assistants contributed, include each assistant’s two lines in order of primary → secondary, grouped by assistant.
+- Do not mix identities across vendors (tool and model must match).
+- Do not use placeholders; use the exact strings.
 
-### Example Commit Message:
+#### Assistant Attribution Registry
+- OpenAI Codex
+  - Co-Authored-By: OpenAI Codex 🤖 <noreply@openai.com>
+  - Co-Authored-By: GPT-5 <noreply@openai.com>
+- Claude Code (Anthropic)
+  - Co-Authored-By: Claude Code 🤖 <noreply@anthropic.com>
+  - Co-Authored-By: Sonnet 4 <noreply@anthropic.com>
+- Gemini CLI (Google)
+  - Co-Authored-By: Gemini CLI 🤖 <noreply@google.com>
+  - Co-Authored-By: Gemini Pro <noreply@google.com>
+  
+Note: If you use a different model variant (e.g., Sonnet 3.5), substitute the model line with the exact variant name from the vendor (e.g., "Sonnet 3.5").
+
+### Example Commit Message (OpenAI Codex):
 ```
 feat: add dark mode toggle to settings
 
@@ -325,11 +340,11 @@ and smooth transitions between light and dark themes.
 
 User-Prompt: I want to add a dark mode toggle to the application settings. Make sure you run the tests and build when you're done!
 
-Co-Authored-By: AI Coding Assistant 🤖 <noreply@example.com>
-Co-Authored-By: Example Model <noreply@example.com>
+Co-Authored-By: OpenAI Codex 🤖 <noreply@openai.com>
+Co-Authored-By: GPT-5 <noreply@openai.com>
 ```
 
-### Example with Multiple User Prompts:
+### Example with Multiple User Prompts (Claude Code):
 ```
 refactor: transform UI to blog layout and configure homepage
 
@@ -346,8 +361,20 @@ User-Prompt: now we just have an empty toolbar, lets remove that as well
 User-Prompt: Please create a home.adoc as the landing page of the blog
 User-Prompt: lets set @preview-src/home.adoc as the home page in @preview-src/ui-model.yml
 
-Co-Authored-By: AI Coding Assistant 🤖 <noreply@example.com>
-Co-Authored-By: Example Model <noreply@example.com>
+Co-Authored-By: Claude Code 🤖 <noreply@anthropic.com>
+Co-Authored-By: Sonnet 4 <noreply@anthropic.com>
+```
+
+### Example (Gemini CLI):
+```
+chore(docs): refresh contributing guide examples
+
+Clarify commit formatting rules and co-author attribution policy.
+
+User-Prompt: Align docs with current tooling and attribution policy.
+
+Co-Authored-By: Gemini CLI 🤖 <noreply@google.com>
+Co-Authored-By: Gemini Pro <noreply@google.com>
 ```
 
 ### Example of Splitting Changes Across Multiple Commits:
