@@ -103,6 +103,35 @@ export default function previewSitePlugin () {
         layouts.clear()
         server.ws.send({ type: 'full-reload' })
       })
+
+      // Add middleware to handle .html requests by mapping to .adoc files
+      server.middlewares.use(async (req, res, next) => {
+        if (req.url?.endsWith('.html') && req.method === 'GET') {
+          const htmlPath = req.url
+          const adocFileName = path.basename(htmlPath, '.html') + '.adoc'
+          const adocPath = path.join(server.config.root, adocFileName)
+          
+          if (fs.existsSync(adocPath)) {
+            try {
+              const content = fs.readFileSync(adocPath, 'utf8')
+              const html = await processAsciiDoc(content, adocPath)
+              
+              // Extract the actual HTML from the export statement
+              const htmlContent = JSON.parse(html.replace('export default ', ''))
+              
+              res.setHeader('Content-Type', 'text/html')
+              res.end(htmlContent)
+              return
+            } catch (error) {
+              console.error(`Error processing ${adocPath}:`, error)
+              res.statusCode = 500
+              res.end('Internal Server Error')
+              return
+            }
+          }
+        }
+        next()
+      })
     },
 
     async load (id) {
