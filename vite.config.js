@@ -43,7 +43,7 @@ export default defineConfig({
     host: '0.0.0.0'
   },
   
-  publicDir: 'public',
+  publicDir: 'preview-dist',
   
   css: {
     postcss: {
@@ -73,8 +73,8 @@ export default defineConfig({
           if (req.url === '/') {
             req.url = '/index.html'
           } else if (req.url?.startsWith('/_/')) {
-            // Serve assets from public/_ directory
-            const filePath = path.join(process.cwd(), 'public', req.url)
+            // Serve assets from preview-dist/_ directory
+            const filePath = path.join(process.cwd(), 'preview-dist', req.url)
             if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
               const ext = path.extname(filePath).toLowerCase()
               let mimeType = 'application/octet-stream'

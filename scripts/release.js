@@ -85,7 +85,7 @@ async function release () {
 
   const bundleName = 'ui'
   const bundleFileBasename = `${bundleName}-bundle.zip`
-  const buildDir = ['deploy-preview', 'branch-deploy'].includes(process.env.CONTEXT) ? 'public/dist' : 'build'
+  const buildDir = ['deploy-preview', 'branch-deploy'].includes(process.env.CONTEXT) ? 'preview-dist/dist' : 'build'
   const bundleFile = await versionBundle(ospath.join(buildDir, bundleFileBasename), tagName)
 
   // Get current commit
