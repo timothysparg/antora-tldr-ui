@@ -8,7 +8,12 @@
     "url": "https://github.com/timothysparg/antora-tldr-ui"
   },
   "scripts": {
-    "start": "gulp preview"
+    "start": "gulp preview",
+    "dev": "gulp preview",
+    "build": "gulp bundle",
+    "preview": "gulp preview",
+    "lint": "gulp lint",
+    "clean": "gulp clean"
   },
   "engines": {
     "node": ">=16.0.0"
@@ -60,6 +65,12 @@
     "require-from-string": "~2.0",
     "stylelint": "~13.13",
     "stylelint-config-standard": "~22.0",
-    "vinyl-fs": "~3.0"
+    "vinyl-fs": "~3.0",
+    "vite": "^5.4.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.2.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-handlebars-precompiler": "^1.0.2",
+    "vite-plugin-zip-pack": "^1.2.0"
   }
 }
