@@ -1,5 +1,5 @@
-// ESM wrapper to bundle highlight.js v9 with selected languages
-import hljs from 'highlight.js/lib/highlight'
+// ESM wrapper to bundle highlight.js v11 with selected languages
+import hljs from 'highlight.js/lib/core'
 import asciidoc from 'highlight.js/lib/languages/asciidoc'
 import clojure from 'highlight.js/lib/languages/clojure'
 import css from 'highlight.js/lib/languages/css'
@@ -33,6 +33,5 @@ hljs.registerLanguage('yaml', yaml)
 Array.prototype.slice
   .call(document.querySelectorAll('pre code.hljs[data-lang]'))
   .forEach(function (node) {
-    hljs.highlightBlock(node)
+    hljs.highlightElement(node)
   })
-
