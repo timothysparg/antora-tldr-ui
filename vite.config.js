@@ -3,10 +3,10 @@ import { resolve } from 'path'
 import copy from 'rollup-plugin-copy'
 
 export default defineConfig({
-  root: '.',
+  root: 'public',
   
   build: {
-    outDir: 'build-vite',
+    outDir: '../build-vite',
     emptyOutDir: true,
     
     rollupOptions: {
@@ -29,8 +29,14 @@ export default defineConfig({
   },
   
   server: {
-    port: 5253,
+    port: 5252,
+    host: '0.0.0.0',
     open: false
+  },
+  
+  preview: {
+    port: 5252,
+    host: '0.0.0.0'
   },
   
   css: {
