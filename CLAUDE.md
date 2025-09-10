@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asciidoctor documentation site. It's built on top of the Antora default UI and uses Gulp as the build system.
+This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asciidoctor documentation site. It's built on top of the Antora default UI and uses Vite as the modern build system.
 
 ## Development Commands
 
@@ -13,15 +13,14 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
 - `npm run build` - Build and bundle the UI for production (creates build/ui-bundle.zip)
 - `npm run bundle` - Alias for build command
 - `npm run preview` - Preview production build using Vite preview server
-- `npm run lint` - Run both CSS and JavaScript linting (still uses Gulp)
-- `npm run clean` - Clean build artifacts (still uses Gulp)
-- `npx gulp format` - Format JavaScript files using prettier-eslint
+- `npm run lint` - Run both CSS and JavaScript linting
+- `npm run clean` - Clean build artifacts
+- `npm run format` - Format JavaScript files using prettier-eslint
 
-### Legacy Gulp Commands (maintained for compatibility)
-- `npm run build:gulp` - Build using original Gulp pipeline
-- `npm run dev:gulp` - Development server using Gulp
-- `npm run preview:gulp` - Preview using Gulp server
-- `npx gulp release` - Bundle and publish to GitHub (CI only)
+### Specialized Tasks
+- `npm run preview:build` - Generate preview pages from AsciiDoc content
+- `npm run lint:css` - Lint CSS files only using stylelint
+- `npm run lint:js` - Lint JavaScript files only using eslint
 
 ## Architecture
 
@@ -30,7 +29,7 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
 - **Configuration**: Build configuration in vite.config.js
 - **Development**: Fast Vite dev server with instant updates and optimized bundling  
 - **Production**: Optimized bundles with CSS/JS minification and font/asset copying
-- **Legacy Gulp**: Maintained for linting, cleaning, and release tasks (gulpfile.js, gulp.d/tasks/)
+- **Preview Generation**: Node.js script for AsciiDoc processing (scripts/build-preview-pages.js)
 
 ### Source Structure
 - `src/` - Main source directory containing all UI assets
@@ -41,7 +40,7 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
   - `helpers/` - Handlebars helper functions
   - `img/` - Images and icons
 - `preview-src/` - Sample content for local development preview
-- `gulp.d/` - Gulp task definitions and build utilities
+- `scripts/` - Node.js utility scripts for build and release processes
 
 #### Template Architecture (Handlebars)
 
@@ -118,13 +117,14 @@ The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose 
 4. Preview content is in `preview-src/` directory for testing
 
 ### Bundle Creation
-1. Run `npm run build` - includes linting, cleaning, and bundling
+1. Run `npm run build` - includes cleaning, linting, and bundling
 2. Vite processes and optimizes CSS into `site.css` and JS into `site.js`
 3. All assets (fonts, images, templates) are copied to correct bundle structure
 4. Final bundle is created as `build/ui-bundle.zip`
 
 ### Release Process
-- Automated via GitHub Actions on pushes to main branch
+- Automated via GitHub Actions on pushes to main branch using `npm run release`
+- CI runs `npm run release` which uses scripts/release.js for GitHub API integration
 - Must pass linting to create release
 - Creates git tag and GitHub release with UI bundle attached
 - Use `[skip ci]` in commit message to skip automated release
@@ -150,7 +150,7 @@ To run the local development preview and take screenshots using the MCP Playwrig
    ```bash
    npm start
    # or
-   npx gulp preview
+   npm run dev
    ```
    The server will be available at http://localhost:5252
 
@@ -238,7 +238,7 @@ When working with Antora preview content and homepage configuration:
 - **Root Cause**: Cached build files or conflicting file names prevent proper routing
 - **Solution Process**:
   1. Remove any conflicting files (e.g., old `index.adoc` files with different content)
-  2. Run `npx gulp clean` to clear all build artifacts
+  2. Run `npm run clean` to clear all build artifacts
   3. Ensure only one `index.adoc` file exists with the desired homepage content
   4. Restart the development server with `npm start`
   5. Verify that `public/index.html` is generated with correct content
@@ -250,7 +250,7 @@ When working with Antora preview content and homepage configuration:
 
 #### Build Cache Considerations
 - Build artifacts are cached in the `public/` directory
-- When making structural changes to content files or routing configuration, always run `npx gulp clean` followed by a fresh `npm start`
+- When making structural changes to content files or routing configuration, always run `npm run clean` followed by a fresh `npm start`
 - Changes to `ui-model.yml` require a server restart to take effect
 
 ## Important Notes
@@ -265,7 +265,7 @@ When working with Antora preview content and homepage configuration:
 
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @README.adoc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @CLAUDE.md
-- Before committing run `npx gulp lint` and `npx gulp format` and fix any issues before the commit can proceed
+- Before committing run `npm run lint` and `npm run format` and fix any issues before the commit can proceed
 - When committing follow the conventional commits syntax for commit messages
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 - After committing changes, run the `/clear` command to clear the session context
