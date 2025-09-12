@@ -1,5 +1,6 @@
 {
   "name": "antora-tldr-ui",
+  "version": "0.1.0",
   "description": "Produces the UI bundle for a blog-style Antora site",
   "homepage": "https://github.com/timothysparg/antora-tldr-ui",
   "license": "MPL-2.0",
@@ -13,10 +14,9 @@
     "build": "npm run clean && npm run lint && vite build",
     "lint": "npm run lint:css && npm run lint:js",
     "lint:css": "stylelint 'src/css/**/*.css'",
-    "lint:js": "eslint 'src/helpers/*.js' 'src/js/**/+([^.])?(.bundle).js' 'scripts/*.js' 'plugins/*.js'",
+    "lint:js": "eslint --no-error-on-unmatched-pattern 'src/helpers/*.js' 'src/js/**/+([^.])?(.bundle).js' 'scripts/*.js' 'plugins/*.js'",
     "format": "npx prettier-eslint --write 'src/helpers/*.js' 'src/js/**/+([^.])?(.bundle).js' 'scripts/*.js' 'plugins/*.js'",
-    "clean": "rm -rf build preview-dist",
-    "release": "node scripts/release.js"
+    "clean": "rm -rf build preview-dist"
   },
   "engines": {
     "node": ">=16.0.0"

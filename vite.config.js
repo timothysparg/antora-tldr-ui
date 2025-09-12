@@ -64,6 +64,25 @@ export default defineConfig({
   },
   
   plugins: [
+    // Inject version into build/ui.yml based on TAG env or package.json version
+    {
+      name: 'inject-ui-version',
+      apply: 'build',
+      writeBundle() {
+        const fs = require('fs')
+        const path = require('path')
+        const pkg = require('./package.json')
+        const tag = process.env.TAG || `v${pkg.version}`
+        const uiYmlPath = path.join(__dirname, 'build', 'ui.yml')
+        let content = ''
+        if (fs.existsSync(uiYmlPath)) {
+          content = fs.readFileSync(uiYmlPath, 'utf8')
+          if (content.length && !content.endsWith('\n')) content += '\n'
+        }
+        content += `version: ${tag}\n`
+        fs.writeFileSync(uiYmlPath, content)
+      },
+    },
     // Custom plugin to serve index.html for root requests and handle asset requests
     {
       name: 'serve-assets',

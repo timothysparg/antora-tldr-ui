@@ -31,7 +31,7 @@ endif::[]
 :url-source-maps: https://developer.mozilla.org/en-US/docs/Tools/Debugger/How_to/Use_a_source_map
 
 ifdef::badges[]
-image:https://img.shields.io/github/release/{project-repo-name}.svg[Latest Release,link={url-project}/releases/download/{current-release}/ui-bundle.zip]
+image:https://img.shields.io/github/release/{project-repo-name}.svg[Latest Release,link={url-project}/releases/latest/download/ui-bundle.zip]
 image:https://api.netlify.com/api/v1/badges/a9db5e1b-d7b7-48c0-b066-1b8d91e9c3d1/deploy-status[Deploy Status,link={url-netlify-deploys}]
 endif::[]
 
@@ -60,7 +60,7 @@ To avoid having to manage the release number in the URL, you can grab the latest
 ----
 ui:
   bundle:
-    url: {url-project}/releases/download/prod-latest/ui-bundle.zip
+    url: {url-project}/releases/latest/download/ui-bundle.zip
 ----
 
 In order for Antora to fetch the latest UI bundle in this case, the `--fetch` option must be used and the `snapshot` key must be set to `true` to bypass the cache.
@@ -226,49 +226,25 @@ The temporary preview URL will automatically be decommissioned once the PR is cl
 
 == Releases
 
-Releases are handled by the `npx gulp release` task, which is automated by a CI job.
-The release process boils down to the following steps:
+Releases are automated using Release Please and GitHub Actions.
+The process works as follows:
 
-. Pack the UI bundle.
-. Tag the git repository using the next version number in the sequence (e.g., v100 after v99)
-. Create a GitHub release from that git tag.
-. Attach the UI bundle to that release as an asset in zip format.
-. Update the README to reference the URL of the lastest bundle and commit that update to the repository.
+. Release Please opens a release pull request that bumps the version in `package.json` and updates `CHANGELOG.md` based on conventional commits.
+. When you merge the release PR, Release Please creates a semver tag (e.g., `v0.1.0`) and a GitHub Release with generated notes.
+. A separate workflow (triggered on release published) builds the UI, produces `build/ui-bundle.zip`, writes the tag into `ui.yml` during the build, and uploads the asset to the GitHub Release.
 
-Fortunately, you don't have to do any of these steps yourself.
-These steps are fully automated by the `npx gulp release` task.
-In fact, you don't even have to run this task.
-Whenever a commit is pushed to the master branch of the repository, it triggers the CI job on master, which executes the `npx gulp release` task using pre-configured credentials.
+Notes:
 
-IMPORTANT: A release will only be made if the project validates (i.e., all lint tasks pass).
-To validate the project, run `npx gulp lint` before pushing your changes to GitHub.
+- Linting runs as part of the build step; releases should pass lint.
+- Consumers can download the latest UI bundle from `{url-project}/releases/latest/download/ui-bundle.zip`.
+- The `:current-release:` attribute in this README is updated automatically by Release Please and can be used if an explicit version is preferred.
 
-The CI job is already configured, so there's nothing you need to do to make automated release work.
-All you have to do is commit your changes and push those commits to the master branch of the git repository.
-A few seconds later, a new bundle will be available for use with Antora.
-Run `git pull` to retrieve the updated README that includes the new URL.
+=== CI Jobs
 
-If you want to commit a change to master without making a release, add the string `[skip ci]` to the end of the commit message.
+- Release automation is defined in [.path]_.github/workflows/release-please.yml_.
+- Asset build and upload on release is defined in [.path]_.github/workflows/release-build.yml_.
 
-The next two sections document how the CI job is set up an configured.
-
-=== Release Task Prerequisites
-
-In addition to the <<Prerequisites>> covered above, you'll need a personal access token for the automated GitHub account, asciidoctor-docbot, so it has permission to make changes to the repository on GitHub.
-The asciidoctor-docbot account will need at least write access to the {url-project} repository, though admin access is recommended.
-
-Start by creating a https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/[personal access token] for the asciidoctor-docbot user.
-The `release` task relies on this token to interact with the GitHub API to create the tag, create the release, and attach the UI bundle.
-The token must have the `public_repo` scope.
-No other scopes are required (as long as the asciidoctor-docbot user has write access to the repository).
-
-=== CI Job
-
-The {url-ci}[CI job] is executed by GitHub Actions and is defined in the file [.path]_.github/workflows/release.yml_.
-It boils down to running the `npx gulp release` task on the main branch.
-The GITHUB_API_TOKEN environment variable is defined in the job configuration.
-
-Once the CI job runs and a new UI bundle is available, you can update the URL of the UI bundle in the Antora playbook file.
+Once a release is published, you can reference the bundle URL in your Antora playbook.
 See <<Usage>> for details.
 
 == Copyright and License
@@ -276,7 +252,7 @@ See <<Usage>> for details.
 === Software
 
 This project is a derivative of the {url-antora-default-ui}[Antora default UI].
-The software assets in this repository (Gulp build script and tasks, web JavaScript files, Handlebars templates and JavaScript helpers, common CSS, utility icons, etc.) come from the {url-antora}[Antora project].
+The software assets in this repository (web JavaScript files, Handlebars templates and JavaScript helpers, common CSS, utility icons, etc.) come from the {url-antora}[Antora project].
 As such, use of the software is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0] (MPL-2.0).
 See link:LICENSE[] to find the full license text.
 

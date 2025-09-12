@@ -123,11 +123,10 @@ The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose 
 4. Final bundle is created as `build/ui-bundle.zip`
 
 ### Release Process
-- Automated via GitHub Actions on pushes to main branch using `npm run release`
-- CI runs `npm run release` which uses scripts/release.js for GitHub API integration
+- Automated via Release Please (GitHub Actions) which opens a release PR and, on merge, creates a semver tag and GitHub Release
+- A separate `on: release` workflow builds the UI and uploads `build/ui-bundle.zip` to the GitHub Release
 - Must pass linting to create release
-- Creates git tag and GitHub release with UI bundle attached
-- Use `[skip ci]` in commit message to skip automated release
+- Consumers can use the latest bundle at `https://github.com/timothysparg/antora-tldr-ui/releases/latest/download/ui-bundle.zip`
 
 ## Tooling
 
@@ -307,7 +306,7 @@ Commit messages must follow this exact structure:
     ✅ Add Vite and related dependencies to package.json
     ✅ Add standardized npm scripts to package.json  
     ✅ Run npm install successfully
-    ✅ Ensure existing Gulp build still works
+    ✅ Ensure Vite build works
     ✅ Run validation tests - all pass
   ```
 

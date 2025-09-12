@@ -10,27 +10,27 @@
     {
       "name": "dev-server",
       "description": "Start development server with live reload",
-      "prompt": "Start the development server using `npm start` or `npx gulp preview`. The server will be available at http://localhost:5252 with live reload for changes to src/ files."
+      "prompt": "Start the development server using `npm start`. The server will be available at http://localhost:5252 with live reload for changes to src/ files."
     },
     {
       "name": "bundle",
       "description": "Build and bundle UI for production",
-      "prompt": "Create the production UI bundle using `npx gulp bundle`. This creates build/ui-bundle.zip after running lint checks."
+      "prompt": "Create the production UI bundle using `npm run build`. This creates build/ui-bundle.zip after running lint checks."
     },
     {
       "name": "lint",
       "description": "Run all linting checks",
-      "prompt": "Run `npx gulp lint` to check both CSS (stylelint) and JavaScript (eslint) code quality."
+      "prompt": "Run `npm run lint` to check both CSS (stylelint) and JavaScript (eslint) code quality."
     },
     {
       "name": "format",
       "description": "Format JavaScript code",
-      "prompt": "Run `npx gulp format` to format JavaScript files using prettier-eslint."
+      "prompt": "Run `npm run format` to format JavaScript files using prettier-eslint."
     },
     {
       "name": "clean",
       "description": "Clean build artifacts",
-      "prompt": "Run `npx gulp clean` to remove build artifacts and cached files."
+      "prompt": "Run `npm run clean` to remove build artifacts and cached files."
     }
   ],
   "contextProviders": [
@@ -39,7 +39,6 @@
       "params": {
         "folders": [
           "src",
-          "gulp.d/tasks",
           "preview-src"
         ]
       }
@@ -49,7 +48,6 @@
       "params": {
         "files": [
           "package.json",
-          "gulpfile.js",
           ".mise.toml",
           "README.adoc",
           "CLAUDE.md"
@@ -72,15 +70,15 @@
     }
   ],
   "rules": [
-    "This is the Asciidoctor Docs UI project - a custom Antora UI bundle built on top of the Antora default UI using Gulp as the build system.",
-    "Always run `npx gulp lint` and `npx gulp format` before committing changes.",
+    "This is the Asciidoctor Docs UI project - a custom Antora UI bundle built on top of the Antora default UI using Vite as the build system.",
+    "Always run `npm run lint` and `npm run format` before committing changes.",
     "The development server runs at http://localhost:5252 with live reload for src/ file changes.",
     "Template files use Handlebars syntax and are organized hierarchically in src/partials/",
     "Preview content for testing is in preview-src/ directory using AsciiDoc format.",
     "The project uses asciidoctor-kroki for diagram rendering via https://kroki.io service.",
     "Node.js version is managed via .mise.toml file.",
     "UI bundle is specifically designed for Antora static site generator.",
-    "Build artifacts are cached in public/ directory - run `npx gulp clean` when making structural changes.",
+    "Build artifacts are created in build/ and preview-dist/ - run `npm run clean` when making structural changes.",
     "Changes to ui-model.yml require server restart to take effect.",
     "COMMIT MESSAGE FORMAT: Follow conventional commits format with these sections: 1) Subject line (feat:, fix:, etc.), 2) Body (optional), 3) User-Prompt section (second to last), 4) Co-Authors section (must be last lines).",
     "USER-PROMPT SECTION: Include user prompts/requests relevant to the changes. Prefix with 'User-Prompt:' on own line. Add chronologically. DO NOT include save/commit instructions. For multi-line prompts, indent continuation lines with 2 spaces for readability. Examples: 'User-Prompt: please remove the navigation section' or 'User-Prompt: for the kroki server, lets just use https://kroki.io . When we install\\n  the kroki plugin remember to install as a dev dependency. To verify run the\\n  preview page and find the page that has a diagram in it.'",
@@ -89,7 +87,7 @@
     "COMMIT SPLITTING SIGNALS: Split if commit message needs multiple 'feat:'/'fix:' prefixes, affects unrelated file types (build tools + templates + docs), or mixes user-facing features with developer tooling setup.",
     "FILE STAGING: CRITICAL - Use selective staging with 'git add <specific-files>' for each commit. NEVER use 'git add .' when making multiple commits. Always verify staged files with 'git status' before committing. Example: First commit 'git add package.json build-preview-pages.js static-sites.adoc', then second commit 'git add continue.json'."
   ],
-  "systemMessage": "You are working on the Asciidoctor Docs UI project, a custom Antora UI bundle. This project uses Gulp for builds, Handlebars for templates, and provides a blog-focused UI theme. Key technologies include PostCSS, Browserify, Highlight.js, and Asciidoctor core. The project has MCP integration for Playwright browser testing, Brave search, and Context7 documentation lookup. Always follow the development workflow: lint code, test changes, and use proper conventional commit messages with User-Prompt sections and Co-Authors attribution.",
+  "systemMessage": "You are working on the Asciidoctor Docs UI project, a custom Antora UI bundle. This project uses Vite for builds, Handlebars for templates, and provides a blog-focused UI theme. Key technologies include PostCSS, Rollup (via Vite), Highlight.js, and Asciidoctor core. The project has MCP integration for Playwright browser testing, Brave search, and Context7 documentation lookup. Always follow the development workflow: lint code, test changes, and use proper conventional commit messages with User-Prompt sections and Co-Authors attribution.",
   "experimental": {
     "modelRoles": {
       "inlineEdit": "claude-3-5-sonnet-20241022"
