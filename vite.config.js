@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import copy from 'rollup-plugin-copy'
 import zipPack from 'vite-plugin-zip-pack'
+import pkg from './package.json' assert { type: 'json' }
 
 export default defineConfig({
   root: '.',
@@ -31,47 +34,12 @@ export default defineConfig({
     }
   },
   
-  server: {
-    port: 5252,
-    host: '0.0.0.0',
-    open: false,
-    fs: {
-      serve: '.'
-    }
-  },
-  
-  preview: {
-    port: 5252,
-    host: '0.0.0.0'
-  },
-  
-  publicDir: 'preview-dist',
-  
-  css: {
-    postcss: {
-      plugins: [
-        require('postcss-import'),
-        require('postcss-url'),
-        require('postcss-custom-properties')({ 
-          disableDeprecationNotice: true, 
-          preserve: true 
-        }),
-        require('postcss-calc'),
-        require('autoprefixer'),
-        require('cssnano')
-      ]
-    }
-  },
-  
   plugins: [
     // Inject version into build/ui.yml based on TAG env or package.json version
     {
       name: 'inject-ui-version',
       apply: 'build',
       writeBundle() {
-        const fs = require('fs')
-        const path = require('path')
-        const pkg = require('./package.json')
         const tag = process.env.TAG || `v${pkg.version}`
         const uiYmlPath = path.join(__dirname, 'build', 'ui.yml')
         let content = ''
@@ -82,43 +50,6 @@ export default defineConfig({
         content += `version: ${tag}\n`
         fs.writeFileSync(uiYmlPath, content)
       },
-    },
-    // Custom plugin to serve index.html for root requests and handle asset requests
-    {
-      name: 'serve-assets',
-      configureServer(server) {
-        const path = require('path')
-        const fs = require('fs')
-        
-        server.middlewares.use((req, res, next) => {
-          if (req.url === '/') {
-            req.url = '/index.html'
-          } else if (req.url?.startsWith('/_/')) {
-            // Serve assets from preview-dist/_ directory
-            const filePath = path.join(process.cwd(), 'preview-dist', req.url)
-            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-              const ext = path.extname(filePath).toLowerCase()
-              let mimeType = 'application/octet-stream'
-              
-              // Set appropriate MIME types
-              if (ext === '.css') mimeType = 'text/css'
-              else if (ext === '.js') mimeType = 'application/javascript'
-              else if (ext === '.png') mimeType = 'image/png'
-              else if (ext === '.jpg' || ext === '.jpeg') mimeType = 'image/jpeg'
-              else if (ext === '.gif') mimeType = 'image/gif'
-              else if (ext === '.svg') mimeType = 'image/svg+xml'
-              else if (ext === '.ico') mimeType = 'image/x-icon'
-              else if (ext === '.woff') mimeType = 'font/woff'
-              else if (ext === '.woff2') mimeType = 'font/woff2'
-              else if (ext === '.ttf') mimeType = 'font/ttf'
-              
-              res.setHeader('Content-Type', mimeType)
-              return fs.createReadStream(filePath).pipe(res)
-            }
-          }
-          next()
-        })
-      }
     },
     copy({
       targets: [
