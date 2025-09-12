@@ -1,5 +1,5 @@
-// Vite entry point that replicates Gulp's JS concatenation behavior
-// This imports all numbered JS files in order to match the current build output
+// Vite entry point that bundles JS modules in a defined order
+// This imports all numbered JS files to match the build output
 
 import './01-nav.js'
 import './02-on-this-page.js'
