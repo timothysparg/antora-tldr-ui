@@ -11,6 +11,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "vite --config preview-src/vite.config.js",
+    "preview": "vite build --config preview-src/vite.config.js && vite preview --port 5253 --strictPort --host --config preview-src/vite.config.js",
     "build": "npm run clean && npm run lint && vite build",
     "lint": "npm run lint:css && npm run lint:js",
     "lint:css": "stylelint 'src/css/**/*.css'",
@@ -19,7 +20,7 @@
     "clean": "rm -rf build preview-dist"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "browserslist": [
     "defaults"

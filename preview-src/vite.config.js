@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import previewSitePlugin from '../plugins/vite-plugin-preview-site.js'
 
 export default defineConfig({
@@ -11,9 +13,6 @@ export default defineConfig({
     {
       name: 'serve-images',
       configureServer(server) {
-        const path = require('path')
-        const fs = require('fs')
-        
         server.middlewares.use((req, res, next) => {
           if (req.url?.startsWith('/img/')) {
             // Serve images from src/img directory
@@ -39,19 +38,43 @@ export default defineConfig({
       }
     }
     ,
-    // Serve bundled vendor scripts from the main build output for preview
+    // Map UI asset URLs to source files for Vite dev transform
     {
-      name: 'serve-bundled-vendor',
+      name: 'rewrite-ui-assets',
       configureServer(server) {
-        const path = require('path')
-        const fs = require('fs')
-        server.middlewares.use((req, res, next) => {
-          if (req.url?.startsWith('/js/vendor/')) {
-            const filePath = path.join(__dirname, '..', 'build', req.url)
-            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-              res.setHeader('Content-Type', 'application/javascript')
-              return fs.createReadStream(filePath).pipe(res)
-            }
+        server.middlewares.use((req, _res, next) => {
+          if (!req.url) return next()
+
+          // /js/vendor/<name>.bundle.js -> src/js/vendor/<name>.esm.js
+          let m = req.url.match(/^\/js\/vendor\/(.+)\.bundle\.js(\?.*)?$/)
+          if (m) {
+            const name = m[1]
+            const esmPath = path.join(__dirname, '..', 'src', 'js', 'vendor', `${name}.esm.js`)
+            if (fs.existsSync(esmPath)) req.url = `/@fs/${esmPath}`
+            return next()
+          }
+
+          // /css/vendor/<name>.css -> src/css/vendor/<name>.css
+          m = req.url.match(/^\/css\/vendor\/(.+)\.css(\?.*)?$/)
+          if (m) {
+            const cssPath = path.join(__dirname, '..', 'src', 'css', 'vendor', `${m[1]}.css`)
+            if (fs.existsSync(cssPath)) req.url = `/@fs/${cssPath}`
+            return next()
+          }
+
+          // /css/(site|home).css -> src/css/<name>.css
+          m = req.url.match(/^\/css\/(site|home)\.css(\?.*)?$/)
+          if (m) {
+            const cssPath = path.join(__dirname, '..', 'src', 'css', `${m[1]}.css`)
+            if (fs.existsSync(cssPath)) req.url = `/@fs/${cssPath}`
+            return next()
+          }
+
+          // /js/site.js -> src/js/site.js
+          if (req.url.startsWith('/js/site.js')) {
+            const jsPath = path.join(__dirname, '..', 'src', 'js', 'site.js')
+            if (fs.existsSync(jsPath)) req.url = `/@fs/${jsPath}`
+            return next()
           }
           next()
         })
@@ -76,7 +99,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': resolve(__dirname, '..'),
-      '/js/vendor': resolve(__dirname, '../build/js/vendor'),
       '/css': resolve(__dirname, '../src/css'),
       '/js': resolve(__dirname, '../src/js')
     }
