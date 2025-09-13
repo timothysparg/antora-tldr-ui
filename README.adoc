@@ -1,6 +1,5 @@
 = Antora TLDR UI
 // Variables:
-:current-release: prod-1
 // Settings:
 :experimental:
 :hide-uri-scheme:
@@ -45,16 +44,7 @@ The rest of the material for the docs site comes from the content repositories.
 
 == Usage
 
-To use this UI with Antora, add the following configuration to the playbook file for your site:
-
-[,yaml,subs=attributes+]
-----
-ui:
-  bundle:
-    url: {url-project}/releases/download/{current-release}/ui-bundle.zip
-----
-
-To avoid having to manage the release number in the URL, you can grab the latest release using the following configuration instead:
+To use this UI with Antora, reference the latest release bundle:
 
 [,yaml,subs=attributes+]
 ----
@@ -229,7 +219,7 @@ The temporary preview URL will automatically be decommissioned once the PR is cl
 Releases are automated using Release Please and GitHub Actions.
 The process works as follows:
 
-. Release Please opens a release pull request that bumps the version in `package.json` and updates `CHANGELOG.md` based on conventional commits.
+. Release Please opens a release pull request that bumps the version in `version.txt` and updates `CHANGELOG.md` based on conventional commits.
 . When you merge the release PR, Release Please creates a semver tag (e.g., `v0.1.0`) and a GitHub Release with generated notes.
 . A separate workflow (triggered on release published) builds the UI, produces `build/ui-bundle.zip`, writes the tag into `ui.yml` during the build, and uploads the asset to the GitHub Release.
 
@@ -237,7 +227,6 @@ Notes:
 
 - Linting runs as part of the build step; releases should pass lint.
 - Consumers can download the latest UI bundle from `{url-project}/releases/latest/download/ui-bundle.zip`.
-- The `:current-release:` attribute in this README is updated automatically by Release Please and can be used if an explicit version is preferred.
 
 === CI Jobs
 
