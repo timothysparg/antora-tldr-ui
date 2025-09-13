@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - name: Setup mise and install tools
-        uses: jdx/mise-action@v2
+        uses: jdx/mise-action@5ac50f778e26fac95da98d50503682459e86d566
         with:
           install: true
       - name: Install dependencies
@@ -26,6 +26,6 @@ jobs:
           TAG: ${{ github.event.release.tag_name }}
         run: npm run build
       - name: Upload release asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
         with:
           files: build/ui-bundle.zip
