@@ -4,3 +4,5 @@
 /.playwright-mcp/
 /preview-output/
 PLAN.md
+.eslintcache
+.stylelintcache

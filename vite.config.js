@@ -4,22 +4,23 @@ import fs from 'node:fs'
 import path from 'node:path'
 import copy from 'rollup-plugin-copy'
 import zipPack from 'vite-plugin-zip-pack'
-import pkg from './package.json' assert { type: 'json' }
+// Read package.json without import assertion to satisfy ESLint parser
+const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url)))
 
 export default defineConfig({
   root: '.',
-  
+
   build: {
     outDir: 'build',
     emptyOutDir: true,
-    
+
     rollupOptions: {
       input: {
         'js/site': resolve(__dirname, 'src/js/site.js'),
-        'site': resolve(__dirname, 'src/css/site.css'),
-        'home': resolve(__dirname, 'src/css/home.css'),
+        site: resolve(__dirname, 'src/css/site.css'),
+        home: resolve(__dirname, 'src/css/home.css'),
         'js/vendor/tabs.bundle': resolve(__dirname, 'src/js/vendor/tabs.esm.js'),
-        'js/vendor/highlight.bundle': resolve(__dirname, 'src/js/vendor/highlight.esm.js')
+        'js/vendor/highlight.bundle': resolve(__dirname, 'src/js/vendor/highlight.esm.js'),
       },
       output: {
         entryFileNames: '[name].js',
@@ -29,17 +30,17 @@ export default defineConfig({
           if (assetInfo.name?.match(/\.(png|jpg|jpeg|gif|svg|ico)$/)) return 'img/[name].[ext]'
           if (assetInfo.name?.match(/\.(woff|woff2|ttf)$/)) return 'font/[name].[ext]'
           return '[name].[ext]'
-        }
-      }
-    }
+        },
+      },
+    },
   },
-  
+
   plugins: [
     // Inject version into build/ui.yml based on TAG env or package.json version
     {
       name: 'inject-ui-version',
       apply: 'build',
-      writeBundle() {
+      writeBundle () {
         const tag = process.env.TAG || `v${pkg.version}`
         const uiYmlPath = path.join(__dirname, 'build', 'ui.yml')
         let content = ''
@@ -56,28 +57,28 @@ export default defineConfig({
         // Copy Handlebars layouts
         {
           src: 'src/layouts/*.hbs',
-          dest: 'build/layouts'
+          dest: 'build/layouts',
         },
         // Copy Handlebars partials
         {
           src: 'src/partials/*.hbs',
-          dest: 'build/partials'
+          dest: 'build/partials',
         },
         // Copy Handlebars helpers
         {
           src: 'src/helpers/*.js',
-          dest: 'build/helpers'
+          dest: 'build/helpers',
         },
         // Copy vendor CSS files
         {
           src: 'src/css/vendor/*.css',
-          dest: 'build/css/vendor'
+          dest: 'build/css/vendor',
         },
         // Note: vendor JS is now bundled via Vite entry points above
         // Copy images (including favicon)
         {
           src: 'src/img/**/*.{png,jpg,jpeg,gif,svg,ico}',
-          dest: 'build/img'
+          dest: 'build/img',
         },
         // Copy fonts from node_modules
         {
@@ -95,23 +96,29 @@ export default defineConfig({
             'node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-500-normal.woff',
             'node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-500-normal.woff2',
             'node_modules/@fontsource/comfortaa/files/comfortaa-latin-400-normal.woff',
-            'node_modules/@fontsource/comfortaa/files/comfortaa-latin-400-normal.woff2'
+            'node_modules/@fontsource/comfortaa/files/comfortaa-latin-400-normal.woff2',
           ],
-          dest: 'build/font'
+          dest: 'build/font',
         },
         // Copy static files if they exist (optional)
-        ...(require('fs').existsSync('src/static') ? [{
-          src: 'src/static/**/*',
-          dest: 'build/',
-          dot: true
-        }] : [])
+        ...(
+          require('fs').existsSync('src/static')
+            ? [
+                {
+                  src: 'src/static/**/*',
+                  dest: 'build/',
+                  dot: true,
+                },
+              ]
+            : []
+        ),
       ],
-      hook: 'writeBundle'
+      hook: 'writeBundle',
     }),
     zipPack({
       inDir: 'build',
       outDir: 'build',
-      outFileName: 'ui-bundle.zip'
-    })
-  ]
+      outFileName: 'ui-bundle.zip',
+    }),
+  ],
 })

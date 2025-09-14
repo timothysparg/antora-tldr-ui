@@ -3,10 +3,10 @@
 
   if (!window.navigator.clipboard) return
 
-  var HEADING_RX = /H[2-6]/
+  const HEADING_RX = /H[2-6]/
 
-  var pageSpec = (document.querySelector('head meta[name=page-spec]') || {}).content
-  var editPageLink = document.querySelector('.toolbar .edit-this-page a')
+  const pageSpec = (document.querySelector('head meta[name=page-spec]') || {}).content
+  const editPageLink = document.querySelector('.toolbar .edit-this-page a')
   if (!(pageSpec && editPageLink)) return
   if (editPageLink) editPageLink.addEventListener('click', onEditPageLinkClick)
   ;[].slice.call(document.querySelectorAll('.doc a.anchor')).forEach(function (anchor) {

@@ -4,23 +4,23 @@
     "src/css/vendor/**/*.css"
   ],
   "rules": {
+    "media-feature-range-notation": "prefix",
+    "value-no-vendor-prefix": true,
     "comment-empty-line-before": null,
     "no-descending-specificity": null,
-    "media-feature-range-notation": "prefix",
     "custom-property-pattern": null,
-    "property-no-deprecated": null,
-    "declaration-property-value-no-unknown": null,
+    "property-no-deprecated": true,
+    "declaration-property-value-no-unknown": true,
     "font-family-name-quotes": null,
     "selector-class-pattern": null,
-    "value-no-vendor-prefix": null,
     "declaration-block-no-redundant-longhand-properties": null,
     "shorthand-property-no-redundant-values": null,
-    "value-keyword-case": null,
+    "value-keyword-case": "lower",
     "color-function-notation": null,
     "color-function-alias-notation": null,
     "alpha-value-notation": null,
-    "function-url-quotes": null,
+    "function-url-quotes": "always",
     "selector-not-notation": null,
-    "import-notation": null
+    "import-notation": "string"
   }
 }

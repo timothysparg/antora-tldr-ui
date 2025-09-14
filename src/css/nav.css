@@ -108,7 +108,7 @@
 }
 
 .nav-menu-toggle {
-  background: transparent url(../img/octicons-24.svg#view-unfold) no-repeat center / 100% 100%;
+  background: transparent url("../img/octicons-24.svg#view-unfold") no-repeat center / 100% 100%;
   border: none;
   float: right;
   height: 1em;
@@ -123,7 +123,7 @@
 }
 
 .nav-menu-toggle.is-active {
-  background-image: url(../img/octicons-24.svg#view-fold);
+  background-image: url("../img/octicons-24.svg#view-fold");
 }
 
 .nav-panel-menu.is-active:hover .nav-menu-toggle {
@@ -168,7 +168,7 @@
 }
 
 .nav-item-toggle {
-  background: transparent url(../img/octicons-16.svg#view-triangle-right) no-repeat center / 100% 100%;
+  background: transparent url("../img/octicons-16.svg#view-triangle-right") no-repeat center / 100% 100%;
   opacity: 0.25;
   border: none;
   outline: none;
@@ -181,7 +181,7 @@
 }
 
 .nav-item.is-active > .nav-item-toggle {
-  background-image: url(../img/octicons-16.svg#view-triangle-down);
+  background-image: url("../img/octicons-16.svg#view-triangle-down");
 }
 
 .is-current-page > .nav-link,
@@ -232,7 +232,7 @@
 
 .nav-panel-explore:not(:first-child) .context .version::after {
   content: "";
-  background: url(../img/octicons-16.svg#view-chevron-down) no-repeat center right -0.15em / 1em 1em;
+  background: url("../img/octicons-16.svg#view-chevron-down") no-repeat center right -0.15em / 1em 1em;
   filter: var(--nav-muted-icon-filter);
   padding-right: 1.25em;
   margin-right: -0.25rem;
@@ -301,7 +301,7 @@
 }
 
 .nav-panel-explore .component .is-current a {
-  border-color: currentColor;
+  border-color: currentcolor;
   opacity: 0.9;
   font-weight: var(--body-font-weight-bold);
 }

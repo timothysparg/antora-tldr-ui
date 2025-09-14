@@ -16,4 +16,3 @@ module.exports = {
     production && require('cssnano')(),
   ].filter(Boolean),
 }
-

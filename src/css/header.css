@@ -50,7 +50,7 @@ body {
 .navbar-brand .navbar-item.title {
   align-self: center;
   color: var(--navbar-font-color);
-  font-family: "Comfortaa", sans-serif;
+  font-family: Comfortaa, sans-serif;
   font-size: 1rem;
   line-height: 1;
   position: relative;
@@ -75,7 +75,7 @@ body {
   line-height: 1.5;
   padding: 0.25rem;
   width: 7ex; /* width required to make input flexible */
-  height: -webkit-fit-content; /* fix for Safari */
+  height: fit-content;
   flex: auto;
 }
 
@@ -183,7 +183,7 @@ body {
 }
 
 .navbar-item .icon svg {
-  fill: currentColor;
+  fill: currentcolor;
 }
 
 .navbar-link {
@@ -344,7 +344,7 @@ div.navbar-link {
   }
 
   .navbar-end .navbar-link::after {
-    border-color: currentColor;
+    border-color: currentcolor;
   }
 
   .navbar-end .navbar-item.search {

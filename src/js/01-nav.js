@@ -1,20 +1,20 @@
 ;(function () {
   'use strict'
 
-  var SECT_CLASS_RX = /^sect[0-5](?=$| )/
+  const SECT_CLASS_RX = /^sect[0-5](?=$| )/
 
-  var navContainer = document.querySelector('.nav-container')
+  const navContainer = document.querySelector('.nav-container')
   if (!navContainer) return
-  var navToggle = document.querySelector('.toolbar .nav-toggle')
+  const navToggle = document.querySelector('.toolbar .nav-toggle')
 
   navToggle.addEventListener('click', showNav)
   navContainer.addEventListener('click', trapEvent)
 
-  var nav = navContainer.querySelector('.nav')
-  var navMenuToggle = navContainer.querySelector('.nav-menu-toggle')
-  var menuPanel = nav.querySelector('[data-panel=menu]')
-  var navBounds = { encroachingElement: document.querySelector('footer.footer') }
-  var currentPageItem
+  const nav = navContainer.querySelector('.nav')
+  const navMenuToggle = navContainer.querySelector('.nav-menu-toggle')
+  const menuPanel = nav.querySelector('[data-panel=menu]')
+  const navBounds = { encroachingElement: document.querySelector('footer.footer') }
+  let currentPageItem
 
   window.addEventListener('load', fitNavInit) /* needed if images shift the content */
   window.addEventListener('resize', fitNavInit)
@@ -30,9 +30,9 @@
     }
     menuPanel.classList.remove('is-loading')
   } else {
-    var match = (currentPageItem = menuPanel.querySelector('.is-current-page'))
+    let match = (currentPageItem = menuPanel.querySelector('.is-current-page'))
     if ((!match || match.classList.contains('is-provisional')) && (match = findItemForHash(true))) {
-      var update = !!currentPageItem
+      const update = !!currentPageItem
       activateCurrentPath((currentPageItem = match), update)
       scrollItemToMidpoint(menuPanel, currentPageItem)
     }
@@ -42,7 +42,7 @@
 
   find(menuPanel, '.nav-item-toggle').forEach(function (btn) {
     btn.addEventListener('click', toggleActive.bind(btn.parentElement))
-    var nextElement = btn.nextElementSibling
+    const nextElement = btn.nextElementSibling
     if (nextElement && nextElement.classList.contains('nav-text')) {
       nextElement.style.cursor = 'pointer'
       nextElement.addEventListener('click', toggleActive.bind(btn.parentElement))
@@ -52,7 +52,7 @@
   if (navMenuToggle && menuPanel.querySelector('.nav-item-toggle')) {
     navMenuToggle.style.display = ''
     navMenuToggle.addEventListener('click', function () {
-      var collapse = !this.classList.toggle('is-active')
+      const collapse = !this.classList.toggle('is-active')
       find(menuPanel, '.nav-item > .nav-item-toggle').forEach(function (btn) {
         collapse ? btn.parentElement.classList.remove('is-active') : btn.parentElement.classList.add('is-active')
       })
@@ -78,7 +78,7 @@
   })
 
   function onHashChange () {
-    var navItem = findItemForHash() || menuPanel.querySelector('.is-current-url')
+    const navItem = findItemForHash() || menuPanel.querySelector('.is-current-url')
     if (!navItem || navItem === currentPageItem) return
     activateCurrentPath((currentPageItem = navItem), true)
     scrollItemToMidpoint(menuPanel, currentPageItem)
@@ -92,7 +92,7 @@
         el.classList.remove('is-current-path', 'is-current-page', 'is-active')
       })
     }
-    var ancestor = navItem
+    let ancestor = navItem
     while ((ancestor = ancestor.parentNode) && ancestor !== menuPanel) {
       if (ancestor.classList.contains('nav-item')) ancestor.classList.add('is-current-path', 'is-active')
     }
@@ -101,10 +101,10 @@
 
   function toggleActive () {
     if (this.classList.toggle('is-active')) {
-      var padding = parseFloat(window.getComputedStyle(this).marginTop)
-      var rect = this.getBoundingClientRect()
-      var menuPanelRect = menuPanel.getBoundingClientRect()
-      var overflowY = Math.round(rect.bottom - menuPanelRect.top - menuPanelRect.height + padding)
+      const padding = parseFloat(window.getComputedStyle(this).marginTop)
+      const rect = this.getBoundingClientRect()
+      const menuPanelRect = menuPanel.getBoundingClientRect()
+      const overflowY = Math.round(rect.bottom - menuPanelRect.top - menuPanelRect.height + padding)
       if (overflowY > 0) menuPanel.scrollTop += Math.min(Math.round(rect.top - menuPanelRect.top - padding), overflowY)
     }
   }
@@ -112,7 +112,7 @@
   function showNav (e) {
     if (navToggle.classList.contains('is-active')) return hideNav(e)
     trapEvent(e)
-    var html = document.documentElement
+    const html = document.documentElement
     if (/mobi/i.test(window.navigator.userAgent)) {
       if (Math.round(parseFloat(window.getComputedStyle(html).minHeight)) !== window.innerHeight) {
         html.style.setProperty('--vh', window.innerHeight / 100 + 'px')
@@ -128,7 +128,7 @@
 
   function hideNav (e) {
     trapEvent(e)
-    var html = document.documentElement
+    const html = document.documentElement
     html.classList.remove('is-clipped--nav')
     navToggle.classList.remove('is-active')
     navContainer.classList.remove('is-active')
@@ -140,27 +140,27 @@
   }
 
   function findItemForHash (articleOnly) {
-    var hash = window.location.hash
+    let hash = window.location.hash
     if (!hash) return
     if (hash.indexOf('%')) hash = decodeURIComponent(hash)
     if (hash.indexOf('"')) hash = hash.replace(/(?=")/g, '\\')
-    var navLink = !articleOnly && menuPanel.querySelector('.nav-link[href="' + hash + '"]')
+    let navLink = !articleOnly && menuPanel.querySelector('.nav-link[href="' + hash + '"]')
     if (navLink) return navLink.parentNode
-    var target = document.getElementById(hash.slice(1))
+    const target = document.getElementById(hash.slice(1))
     if (!target) return
-    var scope = document.querySelector('article.doc')
-    var ancestor = target
+    const scope = document.querySelector('article.doc')
+    let ancestor = target
     while ((ancestor = ancestor.parentNode) && ancestor !== scope) {
-      var id = ancestor.id
+      let id = ancestor.id
       if (!id) id = SECT_CLASS_RX.test(ancestor.className) && (ancestor.firstElementChild || {}).id
       if (id && (navLink = menuPanel.querySelector('.nav-link[href="#' + id + '"]'))) return navLink.parentNode
     }
   }
 
   function scrollItemToMidpoint (panel, item) {
-    var panelRect = panel.getBoundingClientRect()
+    const panelRect = panel.getBoundingClientRect()
     if (panel.scrollHeight === Math.round(panelRect.height)) return // not scrollable
-    var linkRect = item.querySelector('.nav-link').getBoundingClientRect()
+    const linkRect = item.querySelector('.nav-link').getBoundingClientRect()
     panel.scrollTop += Math.round(linkRect.top - panelRect.top - (panelRect.height - linkRect.height) * 0.5)
   }
 
@@ -178,9 +178,9 @@
   }
 
   function fitNav () {
-    var scrollDatum = menuPanel && menuPanel.scrollTop + menuPanel.offsetHeight
-    var occupied = navBounds.availableHeight - navBounds.encroachingElement.getBoundingClientRect().top
-    var modified =
+    const scrollDatum = menuPanel && menuPanel.scrollTop + menuPanel.offsetHeight
+    const occupied = navBounds.availableHeight - navBounds.encroachingElement.getBoundingClientRect().top
+    const modified =
       occupied > 0
         ? nav.style.height !== (nav.style.height = Math.max(Math.round(navBounds.preferredHeight - occupied), 0) + 'px')
         : !!nav.style.removeProperty('height')

@@ -6,13 +6,13 @@ import previewSitePlugin from '../plugins/vite-plugin-preview-site.js'
 
 export default defineConfig({
   root: resolve(__dirname),
-  
+
   plugins: [
     previewSitePlugin(),
     // Custom plugin to serve images and assets
     {
       name: 'serve-images',
-      configureServer(server) {
+      configureServer (server) {
         server.middlewares.use((req, res, next) => {
           if (req.url?.startsWith('/img/')) {
             // Serve images from src/img directory
@@ -20,7 +20,7 @@ export default defineConfig({
             if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
               const ext = path.extname(filePath).toLowerCase()
               let mimeType = 'application/octet-stream'
-              
+
               // Set appropriate MIME types
               if (ext === '.png') mimeType = 'image/png'
               else if (ext === '.jpg' || ext === '.jpeg') mimeType = 'image/jpeg'
@@ -28,20 +28,19 @@ export default defineConfig({
               else if (ext === '.svg') mimeType = 'image/svg+xml'
               else if (ext === '.ico') mimeType = 'image/x-icon'
               else if (ext === '.webp') mimeType = 'image/webp'
-              
+
               res.setHeader('Content-Type', mimeType)
               return fs.createReadStream(filePath).pipe(res)
             }
           }
           next()
         })
-      }
-    }
-    ,
+      },
+    },
     // Map UI asset URLs to source files for Vite dev transform
     {
       name: 'rewrite-ui-assets',
-      configureServer(server) {
+      configureServer (server) {
         server.middlewares.use((req, _res, next) => {
           if (!req.url) return next()
 
@@ -78,31 +77,31 @@ export default defineConfig({
           }
           next()
         })
-      }
-    }
+      },
+    },
   ],
-  
+
   server: {
     port: 5253,
     host: '0.0.0.0',
     open: false,
   },
-  
+
   build: {
     outDir: '../preview-dist',
     emptyOutDir: true,
     rollupOptions: {
-      input: resolve(__dirname, 'index.html')
-    }
+      input: resolve(__dirname, 'index.html'),
+    },
   },
-  
+
   resolve: {
     alias: {
       '~': resolve(__dirname, '..'),
       '/css': resolve(__dirname, '../src/css'),
-      '/js': resolve(__dirname, '../src/js')
-    }
+      '/js': resolve(__dirname, '../src/js'),
+    },
   },
-  
-  publicDir: false
+
+  publicDir: false,
 })

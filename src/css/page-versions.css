@@ -23,7 +23,7 @@
 
 .page-versions .version-menu-toggle::after {
   content: "";
-  background: url(../img/octicons-16.svg#view-chevron-down) no-repeat center right -0.15em / 1em 1em;
+  background: url("../img/octicons-16.svg#view-chevron-down") no-repeat center right -0.15em / 1em 1em;
   filter: var(--toolbar-icon-filter);
   padding-right: 1rem;
 }

@@ -1,9 +1,9 @@
 ;(function () {
   'use strict'
 
-  var article = document.querySelector('article.doc')
-  var toolbar = document.querySelector('.toolbar')
-  var supportsScrollToOptions = 'scrollTo' in document.documentElement
+  const article = document.querySelector('article.doc')
+  const toolbar = document.querySelector('.toolbar')
+  const supportsScrollToOptions = 'scrollTo' in document.documentElement
 
   function decodeFragment (hash) {
     return hash && (~hash.indexOf('%') ? decodeURIComponent(hash) : hash).slice(1)
@@ -19,13 +19,13 @@
       window.location.hash = '#' + this.id
       e.preventDefault()
     }
-    var y = computePosition(this, 0) - toolbar.getBoundingClientRect().bottom
-    var instant = e === false && supportsScrollToOptions
+    const y = computePosition(this, 0) - toolbar.getBoundingClientRect().bottom
+    const instant = e === false && supportsScrollToOptions
     instant ? window.scrollTo({ left: 0, top: y, behavior: 'instant' }) : window.scrollTo(0, y)
   }
 
   window.addEventListener('load', function jumpOnLoad (e) {
-    var fragment, target
+    let fragment, target
     if ((fragment = decodeFragment(window.location.hash)) && (target = document.getElementById(fragment))) {
       jumpToAnchor.call(target, false)
       setTimeout(jumpToAnchor.bind(target, false), 250)
@@ -34,7 +34,7 @@
   })
 
   Array.prototype.slice.call(document.querySelectorAll('a[href^="#"]')).forEach(function (el) {
-    var fragment, target
+    let fragment, target
     if ((fragment = decodeFragment(el.hash)) && (target = document.getElementById(fragment))) {
       el.addEventListener('click', jumpToAnchor.bind(target))
     }
