@@ -395,3 +395,35 @@ feat: create blog homepage and sample content
 User-Prompt: Please create a home.adoc as the landing page of the blog
 User-Prompt: lets set @preview-src/home.adoc as the home page in @preview-src/ui-model.yml
 ```
+
+### Shell‑Safe Commit Message Submission
+
+When creating commits from the CLI, ensure messages use real line breaks and avoid shell interpretation issues:
+
+- Prefer a heredoc with `git commit -F -` to pass the full message with literal newlines.
+  - Use a single‑quoted heredoc delimiter to prevent expansion of backticks, `$()`, and `\n` sequences.
+  - Example:
+    ```bash
+    git commit -F - <<'MSG'
+    feat: concise subject line
+
+    Body line 1
+    Body line 2
+
+    Plan:
+      ✅ Step A
+      ✅ Step B
+
+    User-Prompt: original user instruction 1
+    User-Prompt: original user instruction 2
+
+    Co-Authored-By: OpenAI Codex 🤖 <noreply@openai.com>
+    Co-Authored-By: GPT-5 <noreply@openai.com>
+    MSG
+    ```
+
+- Do not embed literal `\n` characters in `-m` strings; they will be committed as `\n` text, not newlines.
+- Avoid using double quotes around `-m` when the message contains backticks (`` `like this` ``) or `$`; shells may perform command substitution. Use single quotes or a heredoc instead.
+- Multiple `-m` flags are acceptable to create separate paragraphs, but still avoid `\n` escapes — use actual line breaks or separate `-m` options.
+
+Following these tips will ensure commit messages render correctly and include the required sections (Plan, User-Prompt, Co-Authors) with proper formatting.
