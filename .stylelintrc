@@ -1,5 +1,6 @@
 {
   "extends": "stylelint-config-standard",
+  "maxWarnings": 0,
   "ignoreFiles": [
     "src/css/vendor/**/*.css"
   ],

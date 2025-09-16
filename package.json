@@ -13,13 +13,8 @@
     "dev": "vite --config preview-src/vite.config.js",
     "preview": "vite build --config preview-src/vite.config.js && vite preview --port 5253 --strictPort --host --config preview-src/vite.config.js",
     "build": "npm run clean && npm run lint && vite build",
-    "lint": "npm run lint:css && npm run lint:js",
-    "lint:css": "stylelint --cache --cache-location .stylelintcache --max-warnings 0 \"src/css/**/*.css\"",
-    "lint:js": "eslint . --cache --cache-location .eslintcache",
-    "lint:css:ci": "stylelint --max-warnings 0 \"src/css/**/*.css\"",
-    "lint:js:ci": "eslint . --max-warnings 0",
-    "lint:ci": "npm run lint:css:ci && npm run lint:js:ci",
-    "format": "npx prettier-eslint --write 'src/**/*.js' 'plugins/*.js'",
+    "lint": "hk run check --all",
+    "fix": "hk run fix --all",
     "clean": "rm -rf build preview-dist"
   },
   "engines": {

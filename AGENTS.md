@@ -13,14 +13,14 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
 - `npm run build` - Build and bundle the UI for production (creates build/ui-bundle.zip)
 - `npm run bundle` - Alias for build command
 - `npm run preview` - Preview production build using Vite preview server
-- `npm run lint` - Run both CSS and JavaScript linting
+- `hk run check --all` (or `npm run lint`) - Run both CSS and JavaScript linting
+- `hk run fix --all` (or `npm run fix`) - Automatically fix lint issues where possible
 - `npm run clean` - Clean build artifacts
-- `npm run format` - Format JavaScript files using prettier-eslint
 
 ### Specialized Tasks
 - `npm run preview:build` - Generate preview pages from AsciiDoc content
-- `npm run lint:css` - Lint CSS files only using stylelint
-- `npm run lint:js` - Lint JavaScript files only using eslint
+- `hk run check --entry stylelint` - Lint CSS files only using stylelint
+- `hk run check --entry eslint` - Lint JavaScript files only using eslint
 
 ## Architecture
 
@@ -136,10 +136,12 @@ This approach ensures bundle efficiency by only including fonts that are actuall
 ## Development Workflow
 
 ### Local Development
-1. Run `npm ci` to install dependencies
-2. Use `npm start` to launch Vite development server with HMR
-3. Edit files in `src/` directory - changes auto-reload instantly in browser
-4. Preview content is in `preview-src/` directory for testing
+1. Run `mise install` to provision Node.js, hk, and other CLI dependencies
+2. Run `hk setup` to install hk's git hooks locally
+3. Run `npm ci` to install dependencies
+4. Use `npm start` to launch Vite development server with HMR
+5. Edit files in `src/` directory - changes auto-reload instantly in browser
+6. Preview content is in `preview-src/` directory for testing
 
 ### Bundle Creation
 1. Run `npm run build` - includes cleaning, linting, and bundling
@@ -288,7 +290,7 @@ When working with Antora preview content and homepage configuration:
 
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @README.adoc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @AGENTS.md
-- Before committing run `npm run lint` and `npm run format` and fix any issues before the commit can proceed
+- Before committing run `hk run check --all` (or `npm run lint`) and apply `hk run fix --all` as needed so the commit can proceed
 - When committing follow the conventional commits syntax for commit messages
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 - After committing changes, clear the session/context if your tooling supports it

@@ -90,16 +90,16 @@ In this guide, we'll be installing Node.js 16.
 While you can install Node.js from the official packages, we strongly recommend that you use {url-mise}[Mise] (polyglot runtime manager) to manage your Node.js installation(s).
 Follow the {url-mise-install}[Mise installation instructions] to set up Mise on your machine.
 
-Once you've installed Mise, open a new terminal and install Node.js using the following command (the project's .mise.toml file specifies the required version):
+Once you've installed Mise, you'll use the following command _after cloning this repository_ (run from the project root; the [.path]_.mise.toml_ file specifies the required versions):
 
  $ mise install
 
-Mise will automatically use the correct Node.js version when you're in the project directory.
-The Node.js version is managed via the .mise.toml file in the project root.
+Mise will automatically use the correct Node.js version when you're in the project directory and will install the `hk` CLI defined in [.path]_.mise.toml_.
+The Node.js version (and other tools) are managed via the .mise.toml file in the project root.
 
 Now that you have Node.js installed, you can proceed with cloning and initializing the project.
 
-=== Clone and Initialize the UI Projectc
+=== Clone and Initialize the UI Project
 
 Clone the UI project using git:
 
@@ -110,6 +110,11 @@ Clone the UI project using git:
 The example above clones the UI project and then switches to the project folder on your filesystem.
 Stay in this project folder when executing all subsequent commands.
 
+With the repository cloned, install the toolchain declared in [.path]_.mise.toml_ (Node.js, hk, and other CLI dependencies) and register hk's git hooks:
+
+ $ mise install
+ $ hk setup
+
 Use npm to install the project's dependencies inside the project.
 In your terminal, execute the following command:
 
@@ -117,6 +122,20 @@ In your terminal, execute the following command:
 
 This command installs the dependencies listed in [.path]_package.json_ into the [.path]_node_modules/_ folder inside the project.
 This folder does not get included in the UI bundle and should _not_ be committed to the source control repository.
+
+
+=== Linting
+
+The lint workflow is defined in [.path]_hk.pkl_ and executed with the `hk` CLI that Mise installs for you.
+Run linting with:
+
+ $ hk run check --all
+
+To automatically fix what can be corrected, run:
+
+ $ hk run fix --all
+
+The npm scripts `npm run lint` and `npm run fix` delegate to these hk tasks so existing automation continues to work.
 
 === Preview the UI
 
