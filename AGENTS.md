@@ -20,7 +20,7 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
 ### Specialized Tasks
 - `npm run preview:build` - Generate preview pages from AsciiDoc content
 - `hk run check --entry stylelint` - Lint CSS files only using stylelint
-- `hk run check --entry eslint` - Lint JavaScript files only using eslint
+- `hk run check --entry biome` - Lint JavaScript files only using Biome
 
 ## Architecture
 
@@ -123,11 +123,8 @@ This approach ensures bundle efficiency by only including fonts that are actuall
 ## Code Style and Linting
 
 ### JavaScript
-- Uses JavaScript Standard Style (eslint-config-standard)
-- Max line length: 120 characters
-- Arrow functions must have parentheses around parameters
-- Trailing commas required in multiline arrays/objects
-- Use `String#slice` instead of `String#substr`
+- Uses Biome for linting and formatting.
+- The configuration is in `biome.json` and uses the recommended rules.
 
 ### CSS
 - Uses stylelint-config-standard

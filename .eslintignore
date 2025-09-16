@@ -1,6 +1,0 @@
-node_modules/
-build/
-preview-dist/
-src/js/vendor/**
-**/*.min.js
-
