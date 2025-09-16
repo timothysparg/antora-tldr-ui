@@ -36,6 +36,23 @@
         "PLAYWRIGHT_HEADLESS": "true",
         "PLAYWRIGHT_BROWSER": "chromium"
       }
+    },
+    "github": {
+      "command": "op",
+      "args": [
+        "run",
+        "--",
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "op://Personal/GitHub Personal Access Token/token"
+      }
     }
   }
 }

@@ -427,3 +427,90 @@ When creating commits from the CLI, ensure messages use real line breaks and avo
 - Multiple `-m` flags are acceptable to create separate paragraphs, but still avoid `\n` escapes — use actual line breaks or separate `-m` options.
 
 Following these tips will ensure commit messages render correctly and include the required sections (Plan, User-Prompt, Co-Authors) with proper formatting.
+
+## Worktrees & Branch Policy (Agents)
+
+**Never work directly on `main`. Always use a worktree on a dedicated branch.**  
+This prevents accidental commits to `main`, keeps agent changes isolated, and simplifies review.
+
+### Branch naming (aligned with Conventional Commits)
+Use: `{type}/{scope}-{task}-{actor}`
+
+- **type**: `feat|fix|refactor|docs|test|chore|ci`
+- **scope**: app area (e.g., `search`, `auth`, `ui`)
+- **task**: short kebab descriptor (e.g., `bm25`, `oauth-flow`)
+- **actor**: who/what is doing the work (e.g., `claude`, `gemini`, `human`)
+
+**Examples**
+- `feat/search-bm25-claude`
+- `fix/auth-oauth-flow-gemini`
+- `refactor/ui-tables-human`
+
+> Commit messages must still follow Conventional Commits (e.g., `feat(search): add BM25 scorer`).
+
+### Standard workflow
+
+1) **Sync base**
+```bash
+git fetch origin
+```
+
+2) **Create a task base branch from main (no direct work on it)**
+```bash
+git switch -c feat/search-bm25-base origin/main
+```
+
+3) **Create per-actor branches from the task base**
+```bash
+git branch feat/search-bm25-claude   feat/search-bm25-base
+git branch feat/search-bm25-gemini   feat/search-bm25-base
+git branch feat/search-bm25-human    feat/search-bm25-base
+```
+
+4) **Add worktrees for each actor branch**
+```bash
+git worktree add ../wt-claude feat/search-bm25-claude
+git worktree add ../wt-gemini feat/search-bm25-gemini
+git worktree add ../wt-human  feat/search-bm25-human
+```
+
+5) **Identify per worktree (recommended)**
+```bash
+cd ../wt-claude
+git config user.name  "Claude Code (bot)"
+git config user.email "claude+bot@example.com"
+```
+
+6) **Do the work in the worktree, never in the primary checkout**
+```bash
+# inside ../wt-claude
+# run tools, tests, etc.
+git add -p
+git commit -m "feat(search): add BM25 scorer"
+git push -u origin feat/search-bm25-claude
+```
+
+7) **Keep in sync (rebase from the base branch)**
+```bash
+git fetch origin
+git rebase origin/feat/search-bm25-base
+```
+
+8) **PR flow**
+- Open PRs from each actor branch → `feat/search-bm25-base`.
+- After review/merge, open a single PR from `feat/search-bm25-base` → `main`.
+- Squash-merge recommended to maintain clean history.
+
+### Guardrails
+- Protect `main`; block pushes except via PR.
+- Pre-commit + CI must pass before merge.
+- Keep changes small and scoped; split unrelated changes.
+- If two actors must touch the same file, merge one PR, rebase the other.
+
+### Cleanup
+```bash
+# after merging
+git worktree prune
+git branch -d feat/search-bm25-claude feat/search-bm25-gemini feat/search-bm25-human
+rm -rf ../wt-claude ../wt-gemini ../wt-human
+```
