@@ -301,6 +301,14 @@ When working with Antora preview content and homepage configuration:
 - Capture dependencies explicitly when one issue blocks or requires another.
 - Add a brief acknowledgment comment if it matches the repository's collaboration style.
 
+## Creating Pull Requests (agents)
+
+- Use descriptive, human-readable titles that clearly describe the changes.
+- Include summary, motivation, test plan, and benefits in the pull request body.
+- **Do NOT include agent acknowledgment lines** (e.g., "🤖 Generated with [Claude Code]") in pull request descriptions.
+- Agent attribution is handled via commit message Co-Authors sections, not PR descriptions.
+- Focus on technical details and impact of changes for human reviewers.
+
 ## Commit Message Format
 
 Commit messages must follow this exact structure:
