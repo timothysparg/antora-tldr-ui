@@ -1,14 +1,14 @@
 /* Import Fontsource fonts with specific weights/styles used by the theme */
 
 /* Roboto - Normal (400) and Medium (500) weights, normal and italic styles */
-@import '@fontsource/roboto/400.css';
-@import '@fontsource/roboto/400-italic.css';
-@import '@fontsource/roboto/500.css';
-@import '@fontsource/roboto/500-italic.css';
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/400-italic.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/500-italic.css";
 
 /* Roboto Mono - Normal (400) and Medium (500) weights */
-@import '@fontsource/roboto-mono/400.css';
-@import '@fontsource/roboto-mono/500.css';
+@import "@fontsource/roboto-mono/400.css";
+@import "@fontsource/roboto-mono/500.css";
 
 /* Comfortaa - Normal (400) weight */
-@import '@fontsource/comfortaa/400.css';
+@import "@fontsource/comfortaa/400.css";

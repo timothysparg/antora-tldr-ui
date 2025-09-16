@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      - name: Setup mise and install tools
+        uses: jdx/mise-action@5ac50f778e26fac95da98d50503682459e86d566
+        with:
+          install: true
+      - name: Install dependencies
+        run: npm ci
+      - name: Run lint checks
+        run: npm run lint

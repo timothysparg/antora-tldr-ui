@@ -1,7 +1,5 @@
-'use strict'
-
 module.exports = ({
-  data: {
-    root: { contentCatalog = { getSiteStartPage () {} } },
-  },
-}) => contentCatalog.getSiteStartPage()
+	data: {
+		root: { contentCatalog = { getSiteStartPage() {} } },
+	},
+}) => contentCatalog.getSiteStartPage();

@@ -3,3 +3,5 @@
 node = "lts"
 hk = "latest"
 pkl = "latest"
+biome = "latest"
+actionlint = "latest"

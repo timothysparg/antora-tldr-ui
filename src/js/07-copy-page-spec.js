@@ -1,37 +1,38 @@
-;(function () {
-  'use strict'
+(() => {
+	if (!window.navigator.clipboard) return;
 
-  if (!window.navigator.clipboard) return
+	const HEADING_RX = /H[2-6]/;
 
-  const HEADING_RX = /H[2-6]/
+	const pageSpec = document.querySelector("head meta[name=page-spec]")?.content;
+	const editPageLink = document.querySelector(".toolbar .edit-this-page a");
+	if (!(pageSpec && editPageLink)) return;
+	if (editPageLink) editPageLink.addEventListener("click", onEditPageLinkClick);
+	[].slice
+		.call(document.querySelectorAll(".doc a.anchor"))
+		.forEach((anchor) => {
+			if (HEADING_RX.test(anchor.parentNode.tagName))
+				anchor.addEventListener("click", onSectionAnchorClick.bind(anchor));
+		});
 
-  const pageSpec = (document.querySelector('head meta[name=page-spec]') || {}).content
-  const editPageLink = document.querySelector('.toolbar .edit-this-page a')
-  if (!(pageSpec && editPageLink)) return
-  if (editPageLink) editPageLink.addEventListener('click', onEditPageLinkClick)
-  ;[].slice.call(document.querySelectorAll('.doc a.anchor')).forEach(function (anchor) {
-    if (HEADING_RX.test(anchor.parentNode.tagName)) anchor.addEventListener('click', onSectionAnchorClick.bind(anchor))
-  })
+	function onEditPageLinkClick(e) {
+		if (e.altKey) writeToClipboard(pageSpec);
+	}
 
-  function onEditPageLinkClick (e) {
-    if (e.altKey) writeToClipboard(pageSpec)
-  }
+	function onSectionAnchorClick(e) {
+		if (e.altKey) {
+			e.preventDefault();
+			writeToClipboard(pageSpec + decodeFragment(this.hash));
+		}
+	}
 
-  function onSectionAnchorClick (e) {
-    if (e.altKey) {
-      e.preventDefault()
-      writeToClipboard(pageSpec + decodeFragment(this.hash))
-    }
-  }
+	function decodeFragment(hash) {
+		return ~hash.indexOf("%") ? decodeURIComponent(hash) : hash;
+	}
 
-  function decodeFragment (hash) {
-    return ~hash.indexOf('%') ? decodeURIComponent(hash) : hash
-  }
-
-  function writeToClipboard (text) {
-    window.navigator.clipboard.writeText(text).then(
-      function () {},
-      function () {}
-    )
-  }
-})()
+	function writeToClipboard(text) {
+		window.navigator.clipboard.writeText(text).then(
+			() => {},
+			() => {},
+		);
+	}
+})();
