@@ -440,87 +440,66 @@ Following these tips will ensure commit messages render correctly and include th
 
 ## Worktrees & Branch Policy (Agents)
 
-**Never work directly on `main`. Always use a worktree on a dedicated branch.**  
-This prevents accidental commits to `main`, keeps agent changes isolated, and simplifies review.
+**Rule #1: Never work directly on `main`. Always use a dedicated worktree.**  
+Worktrees isolate an agent's task, protect the primary checkout, and keep the commit history easy to trace back to a single assignment.
 
-### Branch naming (aligned with Conventional Commits)
-Use: `{type}/{scope}-{task}-{actor}`
+### Branch naming convention
+Follow `{type}/{scope}-{task}` where values align with Conventional Commits.
 
-- **type**: `feat|fix|refactor|docs|test|chore|ci`
-- **scope**: app area (e.g., `search`, `auth`, `ui`)
-- **task**: short kebab descriptor (e.g., `bm25`, `oauth-flow`)
-- **actor**: who/what is doing the work (e.g., `claude`, `gemini`, `human`)
+- **type**: `feat | fix | refactor | docs | test | chore`
+- **scope**: product area affected (e.g., `api`, `auth`, `ui`)
+- **task**: short kebab descriptor for the work (e.g., `user-login`, `caching-bug`)
 
 **Examples**
-- `feat/search-bm25-claude`
-- `fix/auth-oauth-flow-gemini`
-- `refactor/ui-tables-human`
+- `feat/api-user-login`
+- `fix/ui-caching-bug`
 
-> Commit messages must still follow Conventional Commits (e.g., `feat(search): add BM25 scorer`).
+> Commit messages must still follow Conventional Commits syntax (e.g., `feat(api): add user authentication endpoint`).
 
-### Standard workflow
+### Standard single-agent workflow
 
-1) **Sync base**
-```bash
-git fetch origin
-```
+1. **Sync the primary clone**
+   ```bash
+   git switch main
+   git pull origin main
+   ```
+2. **Create the feature branch and worktree together**
+   - Git does not allow a worktree inside the current checkout. Create a sibling directory (e.g., `../worktrees`) once and reuse it for all tasks.
+   ```bash
+   mkdir -p ../worktrees
+   git worktree add ../worktrees/feat-api-user-login -b feat/api-user-login origin/main
+   ```
+3. **Work only inside the new worktree**
+   ```bash
+   cd ../worktrees/feat-api-user-login
+   git config user.name  "Agent Name"       # optional, for clear attribution
+   git config user.email "agent@example.com"
+   # edit code, run tests, etc.
+   git add .
+   git commit -m "feat(api): add endpoint for user authentication"
+   ```
+4. **Stay current with main**
+   ```bash
+   git fetch origin
+   git rebase origin/main
+   ```
+5. **Publish work and open a PR**
+   ```bash
+   git push -u origin feat/api-user-login
+   # open PR from feat/api-user-login → main
+   ```
+6. **Clean up after merge**
+   ```bash
+   git worktree remove ../worktrees/feat-api-user-login
+   cd ../your-main-repo
+   git switch main
+   git pull
+   git branch -D feat/api-user-login
+   git push origin --delete feat/api-user-login
+   ```
 
-2) **Create a task base branch from main (no direct work on it)**
-```bash
-git switch -c feat/search-bm25-base origin/main
-```
-
-3) **Create per-actor branches from the task base**
-```bash
-git branch feat/search-bm25-claude   feat/search-bm25-base
-git branch feat/search-bm25-gemini   feat/search-bm25-base
-git branch feat/search-bm25-human    feat/search-bm25-base
-```
-
-4) **Add worktrees for each actor branch**
-```bash
-git worktree add ../wt-claude feat/search-bm25-claude
-git worktree add ../wt-gemini feat/search-bm25-gemini
-git worktree add ../wt-human  feat/search-bm25-human
-```
-
-5) **Identify per worktree (recommended)**
-```bash
-cd ../wt-claude
-git config user.name  "Claude Code (bot)"
-git config user.email "claude+bot@example.com"
-```
-
-6) **Do the work in the worktree, never in the primary checkout**
-```bash
-# inside ../wt-claude
-# run tools, tests, etc.
-git add -p
-git commit -m "feat(search): add BM25 scorer"
-git push -u origin feat/search-bm25-claude
-```
-
-7) **Keep in sync (rebase from the base branch)**
-```bash
-git fetch origin
-git rebase origin/feat/search-bm25-base
-```
-
-8) **PR flow**
-- Open PRs from each actor branch → `feat/search-bm25-base`.
-- After review/merge, open a single PR from `feat/search-bm25-base` → `main`.
-- Squash-merge recommended to maintain clean history.
-
-### Guardrails
-- Protect `main`; block pushes except via PR.
-- Pre-commit + CI must pass before merge.
-- Keep changes small and scoped; split unrelated changes.
-- If two actors must touch the same file, merge one PR, rebase the other.
-
-### Cleanup
-```bash
-# after merging
-git worktree prune
-git branch -d feat/search-bm25-claude feat/search-bm25-gemini feat/search-bm25-human
-rm -rf ../wt-claude ../wt-gemini ../wt-human
-```
+### Guardrails & best practices
+- Protect `main` via repository settings; all changes land through PRs.
+- Ensure CI (lint, tests, builds) passes before merge.
+- Keep branches narrowly scoped to a single logical change.
+- Prefer `git worktree remove` and `git worktree prune` for cleanup to avoid stale directories.
