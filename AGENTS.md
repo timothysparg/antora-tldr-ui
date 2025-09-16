@@ -268,9 +268,19 @@ When working with Antora preview content and homepage configuration:
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 - After committing changes, clear the session/context if your tooling supports it
 
+## Creating GitHub Issues (agents)
+
+- Use descriptive, human-readable titles (avoid conventional commit prefixes).
+- Include summary, motivation, and actionable tasks so maintainers can execute without local context.
+- Only reference artifacts available in the repository or public sources; omit local-only notes such as PLAN.md.
+- Capture dependencies explicitly when one issue blocks or requires another.
+- Add a brief acknowledgment comment if it matches the repository's collaboration style.
+
 ## Commit Message Format
 
 Commit messages must follow this exact structure:
+
+> **Signature requirement:** Every commit must be signed with your configured signing key (GPG or SSH). Verify signatures with `git log --show-signature` before handing work off.
 
 1. **Subject line**: Conventional commits format (e.g., "feat:", "fix:", "refactor:")
 2. **Body**: Detailed description of changes (optional)
