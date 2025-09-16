@@ -1,0 +1,27 @@
+amends "package://github.com/jdx/hk/releases/download/v1.2.0/hk@1.2.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.2.0/hk@1.2.0#/Builtins.pkl"
+
+local stylelintStep = (Builtins.stylelint) {
+  glob = List("src/css/**/*.css")
+  check = "stylelint --cache --cache-location .stylelintcache {{ files }}"
+}
+
+local eslintStep = (Builtins.eslint) {
+  glob = List("**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs")
+  check = "eslint --cache --cache-location .eslintcache {{ files }}"
+}
+
+local linters = new Mapping<String, Step> {
+  ["stylelint"] = stylelintStep
+  ["eslint"] = eslintStep
+}
+
+hooks {
+  ["check"] {
+    steps = linters
+  }
+  ["fix"] {
+    fix = true
+    steps = linters
+  }
+}
