@@ -28,7 +28,7 @@ export default defineConfig({
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) return 'css/[name].[ext]'
           if (assetInfo.name?.match(/\.(png|jpg|jpeg|gif|svg|ico)$/)) return 'img/[name].[ext]'
-          if (assetInfo.name?.match(/\.(woff|woff2|ttf)$/)) return 'font/[name].[ext]'
+          if (assetInfo.name?.match(/\.(woff|woff2|ttf)$/)) return 'fonts/[name].[ext]'
           return '[name].[ext]'
         },
       },
@@ -79,26 +79,6 @@ export default defineConfig({
         {
           src: 'src/img/**/*.{png,jpg,jpeg,gif,svg,ico}',
           dest: 'build/img',
-        },
-        // Copy fonts from node_modules
-        {
-          src: [
-            'node_modules/@fontsource/roboto/files/roboto-latin-400-normal.woff',
-            'node_modules/@fontsource/roboto/files/roboto-latin-400-normal.woff2',
-            'node_modules/@fontsource/roboto/files/roboto-latin-400-italic.woff',
-            'node_modules/@fontsource/roboto/files/roboto-latin-400-italic.woff2',
-            'node_modules/@fontsource/roboto/files/roboto-latin-500-normal.woff',
-            'node_modules/@fontsource/roboto/files/roboto-latin-500-normal.woff2',
-            'node_modules/@fontsource/roboto/files/roboto-latin-500-italic.woff',
-            'node_modules/@fontsource/roboto/files/roboto-latin-500-italic.woff2',
-            'node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-400-normal.woff',
-            'node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-400-normal.woff2',
-            'node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-500-normal.woff',
-            'node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-500-normal.woff2',
-            'node_modules/@fontsource/comfortaa/files/comfortaa-latin-400-normal.woff',
-            'node_modules/@fontsource/comfortaa/files/comfortaa-latin-400-normal.woff2',
-          ],
-          dest: 'build/font',
         },
         // Copy static files if they exist (optional)
         ...(
