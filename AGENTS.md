@@ -94,6 +94,31 @@ The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose 
 - **Handlebars**: Template engine for HTML generation (templates copied to bundle)
 - **Highlight.js**: Syntax highlighting (version 9.18.3 specifically)
 - **Asciidoctor**: Content processing (@asciidoctor/core ~2.2)
+- **Fontsource**: Self-hosted font loading (fonts managed via CSS imports, processed by Vite)
+
+### Font Management
+
+This project uses **Fontsource** for font loading, following modern best practices:
+
+#### Current Font Stack
+- **Roboto**: Main body text font (400 normal/italic, 500 normal/italic weights)
+- **Roboto Mono**: Monospace font for code (400 normal, 500 normal weights)
+- **Comfortaa**: Display font for headers and branding (400 normal weight)
+
+#### Implementation
+- Fonts are imported via CSS using `@import '@fontsource/[fontname]/[weight].css'` in `src/css/fonts.css`
+- Vite automatically processes these imports and manages font URL rewriting
+- No manual font file copying - Vite emits only referenced fonts
+- Font files are output to `fonts/` directory in the build bundle
+- CSS font-face URLs point to external Fontsource paths (resolved at bundle deployment)
+
+#### Adding New Fonts
+1. Install the Fontsource package: `npm install @fontsource/[fontname]`
+2. Add appropriate imports to `src/css/fonts.css` for required weights/styles
+3. Update CSS variables in `src/css/vars.css` if needed
+4. Vite will automatically handle the rest
+
+This approach ensures bundle efficiency by only including fonts that are actually used in the theme.
 
 ## Code Style and Linting
 
@@ -284,9 +309,10 @@ Commit messages must follow this exact structure:
 
 1. **Subject line**: Conventional commits format (e.g., "feat:", "fix:", "refactor:")
 2. **Body**: Detailed description of changes (optional)
-3. **Plan section**: When working from a plan (e.g., plan.md), include relevant plan details - third to last
-4. **User-Prompt section**: Original user request(s) - second to last  
-5. **Co-Authors section**: Attribution - must be the last lines
+3. **Plan section**: When working from a plan (e.g., plan.md), include relevant plan details - fourth to last
+4. **User-Prompt section**: Original user request(s) - third to last
+5. **Resolves section**: GitHub issue resolution (e.g., "Resolves: #3") - second to last  
+6. **Co-Authors section**: Attribution - must be the last lines
 
 ### User-Prompt Section
 - **CRITICAL**: Include user prompts and requests that are relevant to the specific changes being committed
@@ -320,6 +346,16 @@ Commit messages must follow this exact structure:
     ✅ Run validation tests - all pass
   ```
 
+### Resolves Section
+- **When to include**: Include when the commit resolves one or more GitHub issues
+- **Format**: Use "Resolves: #<issue-number>" on its own line for each issue
+- **Multiple issues**: Use separate lines for each issue:
+  ```
+  Resolves: #1
+  Resolves: #2
+  ```
+- **Placement**: Must come after User-Prompt section but before Co-Authors section
+
 ### Co-Authors Section  
 - Must be the final lines of the commit message.
 - Use exactly two lines per assistant used, chosen from the Attribution Registry below.
@@ -349,6 +385,8 @@ and smooth transitions between light and dark themes.
 
 User-Prompt: I want to add a dark mode toggle to the application settings. Make sure you run the tests and build when you're done!
 
+Resolves: #42
+
 Co-Authored-By: OpenAI Codex 🤖 <noreply@openai.com>
 Co-Authored-By: GPT-5 <noreply@openai.com>
 ```
@@ -370,6 +408,9 @@ User-Prompt: now we just have an empty toolbar, lets remove that as well
 User-Prompt: Please create a home.adoc as the landing page of the blog
 User-Prompt: lets set @preview-src/home.adoc as the home page in @preview-src/ui-model.yml
 
+Resolves: #15
+Resolves: #23
+
 Co-Authored-By: Claude Code 🤖 <noreply@anthropic.com>
 Co-Authored-By: Sonnet 4 <noreply@anthropic.com>
 ```
@@ -381,6 +422,8 @@ chore(docs): refresh contributing guide examples
 Clarify commit formatting rules and co-author attribution policy.
 
 User-Prompt: Align docs with current tooling and attribution policy.
+
+Resolves: #8
 
 Co-Authored-By: Gemini CLI 🤖 <noreply@google.com>
 Co-Authored-By: Gemini Pro <noreply@google.com>
