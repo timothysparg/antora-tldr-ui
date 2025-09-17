@@ -2,9 +2,20 @@ import fs from "node:fs";
 import path from "node:path";
 import Asciidoctor from "@asciidoctor/core";
 import kroki from "asciidoctor-kroki";
-import chokidar from "chokidar";
 import handlebars from "handlebars";
 import yaml from "js-yaml";
+
+const LAYOUTS_DIR = path.resolve(__dirname, "../src/layouts");
+const PARTIALS_DIR = path.resolve(__dirname, "../src/partials");
+const HELPERS_DIR = path.resolve(__dirname, "../src/helpers");
+const UI_MODEL_PATH = path.resolve(__dirname, "../preview-src/ui-model.yml");
+
+const WATCH_GLOBS = [
+	toGlob(LAYOUTS_DIR, "**/*.hbs"),
+	toGlob(PARTIALS_DIR, "**/*.hbs"),
+	toGlob(HELPERS_DIR, "**/*.js"),
+	UI_MODEL_PATH,
+];
 
 const asciidoctor = Asciidoctor();
 // Create extension registry and register kroki extension
@@ -32,14 +43,13 @@ async function initializeHandlebars() {
 	handlebars.registerHelper("resolvePageURL", resolvePageURL);
 
 	// Register custom helpers from src/helpers
-	const helpersPath = path.resolve(__dirname, "../src/helpers");
-	if (fs.existsSync(helpersPath)) {
+	if (fs.existsSync(HELPERS_DIR)) {
 		const helperFiles = fs
-			.readdirSync(helpersPath)
+			.readdirSync(HELPERS_DIR)
 			.filter((f) => f.endsWith(".js"));
 		for (const file of helperFiles) {
 			const helperName = path.basename(file, ".js");
-			const helperPath = path.join(helpersPath, file);
+			const helperPath = path.join(HELPERS_DIR, file);
 			try {
 				const helperModule = await import(helperPath);
 				handlebars.registerHelper(helperName, helperModule.default);
@@ -50,15 +60,14 @@ async function initializeHandlebars() {
 	}
 
 	// Register partials from src/partials
-	const partialsPath = path.resolve(__dirname, "../src/partials");
-	if (fs.existsSync(partialsPath)) {
+	if (fs.existsSync(PARTIALS_DIR)) {
 		const partialFiles = fs
-			.readdirSync(partialsPath)
+			.readdirSync(PARTIALS_DIR)
 			.filter((f) => f.endsWith(".hbs"));
 		for (const file of partialFiles) {
 			const partialName = path.basename(file, ".hbs");
 			const partialContent = fs.readFileSync(
-				path.join(partialsPath, file),
+				path.join(PARTIALS_DIR, file),
 				"utf8",
 			);
 			handlebars.registerPartial(partialName, partialContent);
@@ -66,15 +75,14 @@ async function initializeHandlebars() {
 	}
 
 	// Load layouts from src/layouts
-	const layoutsPath = path.resolve(__dirname, "../src/layouts");
-	if (fs.existsSync(layoutsPath)) {
+	if (fs.existsSync(LAYOUTS_DIR)) {
 		const layoutFiles = fs
-			.readdirSync(layoutsPath)
+			.readdirSync(LAYOUTS_DIR)
 			.filter((f) => f.endsWith(".hbs"));
 		for (const file of layoutFiles) {
 			const layoutName = path.basename(file, ".hbs");
 			const layoutContent = fs.readFileSync(
-				path.join(layoutsPath, file),
+				path.join(LAYOUTS_DIR, file),
 				"utf8",
 			);
 			layouts.set(
@@ -89,9 +97,8 @@ async function initializeHandlebars() {
 
 function loadUiModel() {
 	if (!uiModel) {
-		const uiModelPath = path.resolve(__dirname, "../preview-src/ui-model.yml");
-		if (fs.existsSync(uiModelPath)) {
-			const content = fs.readFileSync(uiModelPath, "utf8");
+		if (fs.existsSync(UI_MODEL_PATH)) {
+			const content = fs.readFileSync(UI_MODEL_PATH, "utf8");
 			uiModel = yaml.load(content);
 		} else {
 			uiModel = {};
@@ -105,53 +112,12 @@ export default function previewSitePlugin() {
 		name: "preview-site",
 
 		configureServer(server) {
-			const srcWatcher = chokidar.watch(
-				[
-					"../src/layouts/*.hbs",
-					"../src/partials/*.hbs",
-					"../src/helpers/*.js",
-					"ui-model.yml",
-				],
-				{ ignoreInitial: true },
-			);
+			registerHandlebarsWatchers(server);
+			server.middlewares.use(createAsciiDocMiddleware(server.config.root));
+		},
 
-			srcWatcher.on("change", () => {
-				isHandlebarsInitialized = false;
-				uiModel = null;
-				layouts.clear();
-				server.ws.send({ type: "full-reload" });
-			});
-
-			// Add middleware to handle .html requests by mapping to .adoc files
-			server.middlewares.use(async (req, res, next) => {
-				if (req.url?.endsWith(".html") && req.method === "GET") {
-					const htmlPath = req.url;
-					const adocFileName = `${path.basename(htmlPath, ".html")}.adoc`;
-					const adocPath = path.join(server.config.root, adocFileName);
-
-					if (fs.existsSync(adocPath)) {
-						try {
-							const content = fs.readFileSync(adocPath, "utf8");
-							const html = await processAsciiDoc(content, adocPath);
-
-							// Extract the actual HTML from the export statement
-							const htmlContent = JSON.parse(
-								html.replace("export default ", ""),
-							);
-
-							res.setHeader("Content-Type", "text/html");
-							res.end(htmlContent);
-							return;
-						} catch (error) {
-							console.error(`Error processing ${adocPath}:`, error);
-							res.statusCode = 500;
-							res.end("Internal Server Error");
-							return;
-						}
-					}
-				}
-				next();
-			});
+		configurePreviewServer(server) {
+			server.middlewares.use(createAsciiDocMiddleware(server.config.root));
 		},
 
 		async load(id) {
@@ -164,6 +130,71 @@ export default function previewSitePlugin() {
 			}
 			return null;
 		},
+	};
+}
+
+function registerHandlebarsWatchers(server) {
+	server.watcher.add(WATCH_GLOBS);
+
+	let watcherReady = false;
+
+	const markReady = () => {
+		watcherReady = true;
+	};
+
+	server.watcher.on("ready", markReady);
+
+	const invalidate = (file) => {
+		if (!isHandlebarsDependency(file)) return;
+		resetHandlebarsState();
+		server.ws.send({ type: "full-reload" });
+	};
+
+	const onAdd = (file) => {
+		if (!watcherReady) return;
+		invalidate(file);
+	};
+
+	const onChange = (file) => invalidate(file);
+	const onUnlink = (file) => invalidate(file);
+
+	server.watcher.on("add", onAdd);
+	server.watcher.on("change", onChange);
+	server.watcher.on("unlink", onUnlink);
+
+	const cleanup = () => {
+		server.watcher.off("ready", markReady);
+		server.watcher.off("add", onAdd);
+		server.watcher.off("change", onChange);
+		server.watcher.off("unlink", onUnlink);
+	};
+
+	if (server.httpServer) server.httpServer.once("close", cleanup);
+}
+
+function createAsciiDocMiddleware(rootDir) {
+	return async (req, res, next) => {
+		if (!req.url || req.method !== "GET") return next();
+
+		const requestPath = req.url.replace(/\?.*$/, "");
+		if (!requestPath.endsWith(".html")) return next();
+
+		const adocFileName = `${path.basename(requestPath, ".html")}.adoc`;
+		const adocPath = path.join(rootDir, adocFileName);
+
+		if (!fs.existsSync(adocPath)) return next();
+
+		try {
+			const content = fs.readFileSync(adocPath, "utf8");
+			const html = await processAsciiDoc(content, adocPath);
+			const htmlContent = JSON.parse(html.replace("export default ", ""));
+			res.setHeader("Content-Type", "text/html");
+			res.end(htmlContent);
+		} catch (error) {
+			console.error(`Error processing ${adocPath}:`, error);
+			res.statusCode = 500;
+			res.end("Internal Server Error");
+		}
 	};
 }
 
@@ -209,9 +240,24 @@ async function processAsciiDoc(content, filePath) {
 	if (layout) {
 		const html = layout(pageUiModel);
 		return `export default ${JSON.stringify(html)}`;
-	} else {
-		throw new Error(`Layout not found: ${pageUiModel.page.layout}`);
 	}
+	throw new Error(`Layout not found: ${pageUiModel.page.layout}`);
+}
+
+function isHandlebarsDependency(file) {
+	const normalized = path.normalize(file);
+	return (
+		normalized === UI_MODEL_PATH ||
+		normalized.startsWith(`${LAYOUTS_DIR}${path.sep}`) ||
+		normalized.startsWith(`${PARTIALS_DIR}${path.sep}`) ||
+		normalized.startsWith(`${HELPERS_DIR}${path.sep}`)
+	);
+}
+
+function resetHandlebarsState() {
+	isHandlebarsInitialized = false;
+	uiModel = null;
+	layouts.clear();
 }
 
 function relativize(to, { data: { root } }) {
@@ -245,4 +291,8 @@ function resolvePageURL(spec) {
 		spec = spec.split(":").pop();
 		return `/${spec.slice(0, spec.lastIndexOf("."))}.html`;
 	}
+}
+
+function toGlob(dir, pattern) {
+	return `${dir.replace(/\\/g, "/")}/${pattern}`;
 }
