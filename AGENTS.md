@@ -539,6 +539,35 @@ Follow `{type}/{scope}-{task}` where values align with Conventional Commits.
    git push -u origin feat/api-user-login
    # open PR from feat/api-user-login → main
    ```
+
+### Bare repository helper aliases
+
+This repository follows the “sliced bread” bare-repo workflow described in [Sliced Bread: Git worktree and bare repo](https://blog.cryptomilk.org/2023/02/10/sliced-bread-git-worktree-and-bare-repo/). The canonical clone lives in `.bare/`, and task-specific worktrees sit alongside it.
+
+- `git --git-dir=.bare wt` – run `git worktree …` against the bare repo
+- `git --git-dir=.bare wtl` – list registered worktrees
+- `git --git-dir=.bare wtb <branch> <start>` – fetch, force-reset `<branch>` to `<start>`, then add or update the worktree at `./<branch>`
+- `git --git-dir=.bare wtbm <branch>` – same as `wtb`, but uses the remote’s HEAD (e.g., `origin/main`) as the start point
+- `git --git-dir=.bare wtr <branch>` – remove the worktree directory and delete the local branch
+
+All helper aliases now begin with `git fetch --prune origin` so the bare repo always has current remote-tracking refs before branches are moved.
+
+#### Creating a new worktree (example)
+
+```bash
+git --git-dir=.bare wtb feat/api-user-login origin/main
+cd feat/api-user-login
+```
+
+Because branch names can include slashes, Git creates nested directories automatically; adjust `cd` to match the generated path. Use `wtbm` when you want to start from whatever branch the remote advertises as its default (usually `origin/main`).
+
+All commits from worktrees must be signed; always run `git commit -S -m "your message"` so the signature requirement is satisfied.
+
+#### Known pitfall
+
+- *2025-09-17*: Running `git wtb main origin/main` without fetching first produced `fatal: not a valid object name 'origin/main'`. Prepending `git fetch --prune origin` resolved the issue and is now baked into the aliases.
+
+Record additional surprises in this section so future agents can recover quickly.
 6. **Clean up after merge**
    ```bash
    git worktree remove ../worktrees/feat-api-user-login
