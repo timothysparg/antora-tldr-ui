@@ -137,6 +137,13 @@ To automatically fix what can be corrected, run:
 
 The npm scripts `npm run lint` and `npm run fix` delegate to these hk tasks so existing automation continues to work.
 
+The linting workflow includes:
+
+* **JavaScript/TypeScript**: Biome for code quality and formatting
+* **CSS**: stylelint for style validation and best practices
+* **HTML Templates**: djLint for Handlebars template validation and accessibility checks
+* **GitHub Actions**: actionlint for workflow validation
+
 === Preview the UI
 
 The UI project is configured to preview offline.

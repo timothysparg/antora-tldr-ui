@@ -13,14 +13,15 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
 - `npm run build` - Build and bundle the UI for production (creates build/ui-bundle.zip)
 - `npm run bundle` - Alias for build command
 - `npm run preview` - Preview production build using Vite preview server
-- `hk run check --all` (or `npm run lint`) - Run both CSS and JavaScript linting
-- `hk run fix --all` (or `npm run fix`) - Automatically fix lint issues where possible
+- `mise exec -- hk run check --all` (or `npm run lint`) - Run both CSS and JavaScript linting
+- `mise exec -- hk run fix --all` (or `npm run fix`) - Automatically fix lint issues where possible
 - `npm run clean` - Clean build artifacts
 
 ### Specialized Tasks
 - `npm run preview:build` - Generate preview pages from AsciiDoc content
-- `hk run check --entry stylelint` - Lint CSS files only using stylelint
-- `hk run check --entry biome` - Lint JavaScript files only using Biome
+- `mise exec -- hk run check --entry stylelint` - Lint CSS files only using stylelint
+- `mise exec -- hk run check --entry biome` - Lint JavaScript files only using Biome
+- `mise exec -- djlint <files> --profile=handlebars --lint` - Lint Handlebars templates using djLint (access via mise exec prefix)
 
 ## Architecture
 
@@ -287,7 +288,7 @@ When working with Antora preview content and homepage configuration:
 
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @README.adoc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @AGENTS.md
-- Before committing run `hk run check --all` (or `npm run lint`) and apply `hk run fix --all` as needed so the commit can proceed
+- Before committing run `mise exec -- hk run check --all` (or `npm run lint`) and apply `mise exec -- hk run fix --all` as needed so the commit can proceed
 - When committing follow the conventional commits syntax for commit messages
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 - After committing changes, clear the session/context if your tooling supports it

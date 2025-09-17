@@ -13,6 +13,14 @@ local linters = new Mapping<String, Step> {
       check = "npx -y stylelint --cache --cache-location .stylelintcache {{ files }}"
       fix = "npx -y stylelint --cache --cache-location .stylelintcache --fix {{ files }}"
   }
+   ["djlint"] = new Step {
+      glob = List("**/*.hbs")
+      exclude = List(
+         "node_modules/**"
+      )
+      check = "djlint {{ files }} --profile=handlebars --lint"
+      fix = "djlint {{ files }} --profile=handlebars --reformat"
+   }
 }
 
 hooks {

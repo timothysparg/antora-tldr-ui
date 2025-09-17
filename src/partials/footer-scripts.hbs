@@ -1,9 +1,14 @@
-<script type="module" id="site-script" src="{{{uiRootPath}}}/js/site.js" data-ui-root-path="{{{uiRootPath}}}"></script>
+<script type="module"
+        id="site-script"
+        src="{{{uiRootPath}}}/js/site.js"
+        data-ui-root-path="{{{uiRootPath}}}"></script>
 <script type="module" async src="{{{uiRootPath}}}/js/vendor/tabs.bundle.js"></script>
-<script type="module" async src="{{{uiRootPath}}}/js/vendor/highlight.bundle.js"></script>
+<script type="module"
+        async
+        src="{{{uiRootPath}}}/js/vendor/highlight.bundle.js"></script>
 {{#with (resolvePage page.relativeSrcPath model=false)}}
-{{#unless (eq ./asciidoc.attributes.stem undefined)}}
-<script type="text/x-mathjax-config">
+    {{#unless (eq ./asciidoc.attributes.stem undefined)}}
+    <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   messageStyle: "none",
   tex2jax: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]], ignoreClass: "nostem|nolatexmath" },
@@ -18,10 +23,19 @@ MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
     return data
   })
 })
-</script>
-<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+    </script>
+    <script async
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 {{/unless}}
 {{/with}}
-{{#if env.ALGOLIA_API_KEY}}
-<script async id="search-script" src="{{{uiRootPath}}}/js/vendor/docsearch.js"{{#if env.ALGOLIA_APP_ID}} data-app-id="{{env.ALGOLIA_APP_ID}}"{{/if}} data-api-key="{{env.ALGOLIA_API_KEY}}" data-index-name="{{env.ALGOLIA_IDX_NAME}}" data-stylesheet="{{{uiRootPath}}}/css/vendor/docsearch.css"></script>
+{{#if env.ALGOLIA_API_KEY }}
+    <script async
+            id="search-script"
+            src="{{{uiRootPath}}}/js/vendor/docsearch.js"
+            {{#if env.ALGOLIA_APP_ID}}
+            data-app-id="{{env.ALGOLIA_APP_ID}}"
+            {{/if}}
+            data-api-key="{{env.ALGOLIA_API_KEY}}"
+            data-index-name="{{env.ALGOLIA_IDX_NAME}}"
+            data-stylesheet="{{{uiRootPath}}}/css/vendor/docsearch.css"></script>
 {{/if}}
