@@ -23,6 +23,10 @@ This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asci
 - `mise exec -- hk run check --entry biome` - Lint JavaScript files only using Biome
 - `mise exec -- djlint <files> --profile=handlebars --lint` - Lint Handlebars templates using djLint (access via mise exec prefix)
 
+### Preview Dev Server
+- `preview-src/vite.config.js` serves `/css`, `/js`, `/img`, etc. via Vite's built-in static middleware using `sirv` and `server.fs.allow` – no bespoke rewrite logic required.
+- Handlebars layouts/partials/helpers and `ui-model.yml` rely on Vite's watcher (`server.watcher`) for invalidation; changing them triggers a full preview reload without custom `chokidar` wiring.
+
 ## Architecture
 
 ### Build System
