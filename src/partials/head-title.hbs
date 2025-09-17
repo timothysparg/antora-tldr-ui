@@ -1,1 +1,3 @@
-    <title>{{{detag (or page.title defaultPageTitle)}}}{{#unless page.home}}{{#with site.title}} | {{this}}{{/with}}{{/unless}}</title>
+<title>{{{detag (or page.title defaultPageTitle)}}}{{#unless page.home}}
+    {{#with site.title}}
+    | {{this}}{{/with}}{{/unless}}</title>
