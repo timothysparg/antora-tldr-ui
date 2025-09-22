@@ -296,6 +296,7 @@ When working with Antora preview content and homepage configuration:
 - When committing follow the conventional commits syntax for commit messages
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 - After committing changes, clear the session/context if your tooling supports it
+- Before editing any files, create and switch to a task branch following the Branch Workflow guidance
 
 ## Creating GitHub Issues (agents)
 
@@ -493,10 +494,9 @@ When creating commits from the CLI, ensure messages use real line breaks and avo
 
 Following these tips will ensure commit messages render correctly and include the required sections (Plan, User-Prompt, Co-Authors) with proper formatting.
 
-## Worktrees & Branch Policy (Agents)
+## Branch Workflow (Agents)
 
-**Rule #1: Never work directly on `main`. Always use a dedicated worktree.**  
-Worktrees isolate an agent's task, protect the primary checkout, and keep the commit history easy to trace back to a single assignment.
+**Rule #1: Never work directly on `main`. Always work from a dedicated topic branch.**
 
 ### Branch naming convention
 Follow `{type}/{scope}-{task}` where values align with Conventional Commits.
@@ -516,69 +516,32 @@ Follow `{type}/{scope}-{task}` where values align with Conventional Commits.
 1. **Sync the primary clone**
    ```bash
    git switch main
-   git pull origin main
+   git pull --ff-only origin main
    ```
-2. **Create the feature branch and worktree together**
-   - Git does not allow a worktree inside the current checkout. Create a sibling directory (e.g., `../worktrees`) once and reuse it for all tasks.
+2. **Create a feature branch**
    ```bash
-   mkdir -p ../worktrees
-   git worktree add ../worktrees/feat-api-user-login -b feat/api-user-login origin/main
+   git switch -c feat/api-user-login
    ```
-3. **Work only inside the new worktree**
-   ```bash
-   cd ../worktrees/feat-api-user-login
-   git config user.name  "Agent Name"       # optional, for clear attribution
-   git config user.email "agent@example.com"
-   # edit code, run tests, etc.
-   git add .
-   git commit -m "feat(api): add endpoint for user authentication"
-   ```
+   Set your local git identity if needed and begin editing files from this branch.
+3. **Develop on the branch**
+   - Keep commits focused and signed (`git commit -S ...`).
+   - Run required linting and tests before every commit.
 4. **Stay current with main**
    ```bash
    git fetch origin
    git rebase origin/main
    ```
+   Resolve conflicts locally and continue work once the rebase completes.
 5. **Publish work and open a PR**
    ```bash
    git push -u origin feat/api-user-login
    # open PR from feat/api-user-login → main
    ```
-
-### Bare repository helper aliases
-
-This repository follows the “sliced bread” bare-repo workflow described in [Sliced Bread: Git worktree and bare repo](https://blog.cryptomilk.org/2023/02/10/sliced-bread-git-worktree-and-bare-repo/). The canonical clone lives in `.bare/`, and task-specific worktrees sit alongside it.
-
-- `git --git-dir=.bare wt` – run `git worktree …` against the bare repo
-- `git --git-dir=.bare wtl` – list registered worktrees
-- `git --git-dir=.bare wtb <branch> <start>` – fetch, force-reset `<branch>` to `<start>`, then add or update the worktree at `./<branch>`
-- `git --git-dir=.bare wtbm <branch>` – same as `wtb`, but uses the remote’s HEAD (e.g., `origin/main`) as the start point
-- `git --git-dir=.bare wtr <branch>` – remove the worktree directory and delete the local branch
-
-All helper aliases now begin with `git fetch --prune origin` so the bare repo always has current remote-tracking refs before branches are moved.
-
-#### Creating a new worktree (example)
-
-```bash
-git --git-dir=.bare wtb feat/api-user-login origin/main
-cd feat/api-user-login
-```
-
-Because branch names can include slashes, Git creates nested directories automatically; adjust `cd` to match the generated path. Use `wtbm` when you want to start from whatever branch the remote advertises as its default (usually `origin/main`).
-
-All commits from worktrees must be signed; always run `git commit -S -m "your message"` so the signature requirement is satisfied.
-
-#### Known pitfall
-
-- *2025-09-17*: Running `git wtb main origin/main` without fetching first produced `fatal: not a valid object name 'origin/main'`. Prepending `git fetch --prune origin` resolved the issue and is now baked into the aliases.
-
-Record additional surprises in this section so future agents can recover quickly.
 6. **Clean up after merge**
    ```bash
-   git worktree remove ../worktrees/feat-api-user-login
-   cd ../your-main-repo
    git switch main
-   git pull
-   git branch -D feat/api-user-login
+   git pull --ff-only origin main
+   git branch -d feat/api-user-login
    git push origin --delete feat/api-user-login
    ```
 
@@ -586,4 +549,5 @@ Record additional surprises in this section so future agents can recover quickly
 - Protect `main` via repository settings; all changes land through PRs.
 - Ensure CI (lint, tests, builds) passes before merge.
 - Keep branches narrowly scoped to a single logical change.
-- Prefer `git worktree remove` and `git worktree prune` for cleanup to avoid stale directories.
+- Prefer rebasing over merge commits to keep history linear unless a maintainer requests otherwise.
+- Remove local branches after they merge to keep your environment tidy and avoid accidental reuse.
