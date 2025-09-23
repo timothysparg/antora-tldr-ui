@@ -4,159 +4,158 @@ This file provides guidance to AI coding agents working with code in this reposi
 
 ## Project Overview
 
-This is the Asciidoctor Docs UI project - a custom Antora UI bundle for the Asciidoctor documentation site. It's built on top of the Antora default UI and uses Vite as the modern build system.
+This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the Asciidoctor documentation site. The project builds on top of Antora's default UI, but the preview workflow now relies on Antora itself (driven by mise tasks) instead of a bespoke Vite server. CSS and JavaScript assets are produced with PostCSS and esbuild, and the resulting bundle ships the Handlebars layouts, partials, helpers, fonts, and images consumed by Antora.
 
 ## Development Commands
 
 ### Common Development Tasks
-- `npm start` or `npm run dev` - Start Vite development server with HMR at http://localhost:5252
-- `npm run build` - Build and bundle the UI for production (creates build/ui-bundle.zip)
-- `npm run bundle` - Alias for build command
-- `npm run preview` - Preview production build using Vite preview server
-- `mise exec -- hk run check --all` (or `npm run lint`) - Run both CSS and JavaScript linting
-- `mise exec -- hk run fix --all` (or `npm run fix`) - Automatically fix lint issues where possible
-- `npm run clean` - Clean build artifacts
+- `npm run dev` – Build the UI bundle once, then launch the live preview stack (mise runs live-server plus preview/theme watchers). Use Ctrl+C to stop. If you background the process manually, clean up `.devserver.pid` afterward.
+- `npm run preview` – Execute a single Antora build via `mise run preview`; regenerates `public/` and refreshes `ui-bundle.zip`.
+- `npm run bundle` / `npm run build` – Produce the distribution archive through `mise run bundle` (runs CSS/JS optimizers and asset packaging).
+- `npm run clean` – Remove `public/`, `build/`, `.antora-cache`, and `ui-bundle.zip`.
+- `npm run lint` / `npm run fix` – Run or auto-fix lint rules through hk (Biome, stylelint, djLint, actionlint).
 
 ### Specialized Tasks
-- `npm run preview:build` - Generate preview pages from AsciiDoc content
-- `mise exec -- hk run check --entry stylelint` - Lint CSS files only using stylelint
-- `mise exec -- hk run check --entry biome` - Lint JavaScript files only using Biome
-- `mise exec -- djlint <files> --profile=handlebars --lint` - Lint Handlebars templates using djLint (access via mise exec prefix)
+- `mise run watch:preview` – Watch Antora preview content (`preview-src/modules/ROOT`) and rebuild the site when AsciiDoc changes.
+- `mise run watch:theme` – Watch UI theme sources (`src/layouts`, `src/partials`, `src/helpers`, `src/css`, `src/js`, `src/img`) and trigger preview rebuilds. A `--` separator is already baked into the task so watchexec handles flags correctly.
+- `mise run serve` – Serve the latest `public/` directory on http://127.0.0.1:5252 without watchers.
+- `mise run validate` – Sanity-check that required Antora files and directories exist before attempting a build.
 
 ### Preview Dev Server
-- `preview-src/vite.config.js` serves `/css`, `/js`, `/img`, etc. via Vite's built-in static middleware using `sirv` and `server.fs.allow` – no bespoke rewrite logic required.
-- Handlebars layouts/partials/helpers and `ui-model.yml` rely on Vite's watcher (`server.watcher`) for invalidation; changing them triggers a full preview reload without custom `chokidar` wiring.
+- `mise run dev` orchestrates the full developer loop: it runs `mise run preview` once, then starts `mise run serve`, `mise run watch:preview`, and `mise run watch:theme`. All three tasks stream to the terminal; press Ctrl+C once to shut them down cleanly.
+- If a previous agent left the dev server running, stop it with `kill $(cat .devserver.pid)` and delete `.devserver.pid` before starting a new session.
+- The live preview serves content from `public/`. When the watchers rebuild, live-server automatically refreshes connected browsers.
 
 ## Architecture
 
 ### Build System
-- **Vite**: Modern build tool and development server with HMR (Hot Module Replacement)
-- **Configuration**: Build configuration in vite.config.js
-- **Development**: Fast Vite dev server with instant updates and optimized bundling  
-- **Production**: Optimized bundles with CSS/JS minification and font/asset copying
-- **Preview Generation**: Node.js script for AsciiDoc processing (scripts/build-preview-pages.js)
+- **Antora CLI**: `preview-src/antora-playbook.yml` drives preview generation against the checked-out UI sources. Antora writes the static site to `public/`.
+- **Mise**: Orchestrates tool installation and wraps repeatable tasks (`preview`, `bundle`, `dev`, `watch:*`, `clean`).
+- **PostCSS**: Processes `src/css/site.css` and `src/css/home.css`, applying imports, custom properties, autoprefixer, and minification for production bundles.
+- **esbuild**: Bundles and minifies JavaScript entry points, including vendored tab/document search helpers.
+- **live-server + watchexec**: Provide local serving and rebuild-on-change flows during development.
 
 ### Source Structure
-- `src/` - Main source directory containing all UI assets
-  - `css/` - Stylesheets including vendor CSS and custom styling
-  - `js/` - JavaScript files including vendor libraries and custom scripts
-  - `layouts/` - Handlebars templates for page layouts
-  - `partials/` - Handlebars partial templates for reusable components
-  - `helpers/` - Handlebars helper functions
-  - `img/` - Images and icons
-- `preview-src/` - Sample content for local development preview
-- `scripts/` - Node.js utility scripts for build and release processes
+- `src/` – Primary UI assets
+  - `css/` – Stylesheets (including vendor CSS)
+  - `js/` – JavaScript modules and vendor bundles
+  - `layouts/`, `partials/`, `helpers/` – Handlebars templates and helpers
+  - `img/` – Images and icons
+  - `ui.yml` – UI descriptor included in the bundle
+- `preview-src/` – Antora preview component
+  - `antora.yml` – Component descriptor (`name`, `nav`, `start_page`)
+  - `antora-playbook.yml` – Playbook used for local preview builds
+  - `modules/ROOT/pages/` – Sample AsciiDoc content (home, kitchen sink, components, etc.)
+  - `modules/ROOT/nav.adoc` – Navigation structure for the preview
+  - `modules/ROOT/images/` – Preview-only images
+- `build/` – Production build output assembled during `mise run bundle`
+- `public/` – Generated preview site output created by Antora
+- `scripts/` – Node.js utilities retained for release automation (preview generation no longer lives here)
 
 #### Template Architecture (Handlebars)
 
 **Layouts (`src/layouts/`):**
-- `default.hbs` - Main page layout template (includes head, header, body, footer)
-- `404.hbs` - Error page layout for 404 pages
+- `default.hbs` – Main page layout template (includes head, header, body, footer)
+- `404.hbs` – Error page layout for 404 pages
 
 **Partials (`src/partials/`):**
 The partials are organized in a hierarchical structure:
 
 *Page Structure:*
-- `head.hbs` - Aggregates all head-related partials
-  - `head-prelude.hbs` - Early head content
-  - `head-title.hbs` - Page title generation
-  - `head-styles.hbs` - CSS stylesheet links
-  - `head-info.hbs` - Metadata and OpenGraph tags
-  - `head-meta.hbs` - Meta tags
-  - `head-scripts.hbs` - Head JavaScript includes
-  - `head-icons.hbs` - Favicon and icon links
-- `header.hbs` - Aggregates header components
-  - `header-scripts.hbs` - Header JavaScript
-  - `header-content.hbs` - Main navigation bar with logo, search, and menu
-- `body.hbs` - Main content wrapper
-  - `nav.hbs` - Left sidebar navigation container
-    - `nav-menu.hbs` - Component/version navigation menu
-    - `nav-explore.hbs` - Site exploration menu
-    - `nav-tree.hbs` - Hierarchical page navigation
-  - `main.hbs` - Article content area
-    - `toolbar.hbs` - Page tools (breadcrumbs, edit link, version selector)
-    - `toc.hbs` - Table of contents
-    - `article.hbs` - Main article content
-    - `article-404.hbs` - 404 error content
-- `footer.hbs` - Aggregates footer components
-  - `footer-content.hbs` - Footer links, branding, and legal information
-  - `footer-scripts.hbs` - Footer JavaScript includes
+- `head.hbs` – Aggregates all head-related partials
+  - `head-prelude.hbs` – Early head content
+  - `head-title.hbs` – Page title generation
+  - `head-styles.hbs` – CSS stylesheet links
+  - `head-info.hbs` – Metadata and OpenGraph tags
+  - `head-meta.hbs` – Meta tags
+  - `head-scripts.hbs` – Head JavaScript includes
+  - `head-icons.hbs` – Favicon and icon links
+- `header.hbs` – Aggregates header components
+  - `header-scripts.hbs` – Header JavaScript
+  - `header-content.hbs` – Main navigation bar with logo, search, and menu
+- `body.hbs` – Main content wrapper
+  - `nav.hbs` – Left sidebar navigation container
+    - `nav-menu.hbs` – Component/version navigation menu
+    - `nav-explore.hbs` – Site exploration menu
+    - `nav-tree.hbs` – Hierarchical page navigation
+  - `main.hbs` – Article content area
+    - `toolbar.hbs` – Page tools (breadcrumbs, edit link, version selector)
+    - `toc.hbs` – Table of contents
+    - `article.hbs` – Main article content
+    - `article-404.hbs` – 404 error content
+- `footer.hbs` – Aggregates footer components
+  - `footer-content.hbs` – Footer links, branding, and legal information
+  - `footer-scripts.hbs` – Footer JavaScript includes
 
 *Component Partials:*
-- `breadcrumbs.hbs` - Navigation breadcrumb trail
-- `edit-this-page.hbs` - Edit page link functionality
-- `page-versions.hbs` - Version selector dropdown
-- `pagination.hbs` - Previous/next page navigation
-- `nav-toggle.hbs` - Mobile navigation toggle button
+- `breadcrumbs.hbs` – Navigation breadcrumb trail
+- `edit-this-page.hbs` – Edit page link functionality
+- `page-versions.hbs` – Version selector dropdown
+- `pagination.hbs` – Previous/next page navigation
+- `nav-toggle.hbs` – Mobile navigation toggle button
 
 *Template Composition:*
 The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose the final page structure. Each partial is focused on a specific UI component or functionality, allowing for modularity and maintainability.
 
 ### Key Technologies
-- **Vite**: Modern build tool and development server with HMR
-- **Rollup**: JavaScript bundling (via Vite)
-- **PostCSS**: CSS processing with autoprefixer and cssnano
-- **Handlebars**: Template engine for HTML generation (templates copied to bundle)
-- **Highlight.js**: Syntax highlighting (version 9.18.3 specifically)
-- **Asciidoctor**: Content processing (@asciidoctor/core ~2.2)
-- **Fontsource**: Self-hosted font loading (fonts managed via CSS imports, processed by Vite)
+- **Antora** – Generates preview content directly from the current repository state.
+- **PostCSS** – Handles CSS composition and optimization.
+- **esbuild** – Bundles JavaScript for production usage.
+- **Handlebars** – Template engine for HTML generation (templates copied into the bundle).
+- **Highlight.js** – Syntax highlighting (v11.11.1).
+- **Fontsource** – Provides self-hosted font files that are copied into the bundle.
+- **watchexec / live-server** – Enable local rebuilds and preview serving.
 
 ### Font Management
 
-This project uses **Fontsource** for font loading, following modern best practices:
-
-#### Current Font Stack
-- **Roboto**: Main body text font (400 normal/italic, 500 normal/italic weights)
-- **Roboto Mono**: Monospace font for code (400 normal, 500 normal weights)
-- **Comfortaa**: Display font for headers and branding (400 normal weight)
-
-#### Implementation
-- Fonts are imported via CSS using `@import '@fontsource/[fontname]/[weight].css'` in `src/css/fonts.css`
-- Vite automatically processes these imports and manages font URL rewriting
-- No manual font file copying - Vite emits only referenced fonts
-- Font files are output to `fonts/` directory in the build bundle
-- CSS font-face URLs point to external Fontsource paths (resolved at bundle deployment)
-
-#### Adding New Fonts
-1. Install the Fontsource package: `npm install @fontsource/[fontname]`
-2. Add appropriate imports to `src/css/fonts.css` for required weights/styles
-3. Update CSS variables in `src/css/vars.css` if needed
-4. Vite will automatically handle the rest
-
-This approach ensures bundle efficiency by only including fonts that are actually used in the theme.
-
-## Code Style and Linting
-
-### JavaScript
-- Uses Biome for linting and formatting.
-- The configuration is in `biome.json` and uses the recommended rules.
-
-### CSS
-- Uses stylelint-config-standard
-- No enforcement of comment empty lines or descending specificity rules
+Fontsource packages are imported through CSS (`@import '@fontsource/<family>/<weight>.css'`). During `mise run bundle`, the `build:assets` task copies the referenced font files from `node_modules/@fontsource/*/files/` into `build/fonts/`, and URL rewriting in `build:css` ensures the bundle references those local copies. Adding a new font requires installing the appropriate Fontsource package, importing the desired weights in `src/css/fonts.css`, and updating any CSS variables in `src/css/vars.css`.
 
 ## Development Workflow
 
 ### Local Development
-1. Run `mise install` to provision Node.js, hk, and other CLI dependencies
-2. Run `hk setup` to install hk's git hooks locally
-3. Run `npm ci` to install dependencies
-4. Use `npm start` to launch Vite development server with HMR
-5. Edit files in `src/` directory - changes auto-reload instantly in browser
-6. Preview content is in `preview-src/` directory for testing
+1. Run `mise install` to provision Node.js, hk, watchexec, and other CLI dependencies.
+2. Run `hk setup` to install hk's git hooks locally.
+3. Run `npm ci` to install Node.js dependencies.
+4. Launch the preview loop with `npm run dev`. This builds the bundle, starts live-server on http://127.0.0.1:5252, and begins watching both preview content and theme sources.
+5. To rebuild once without watchers, use `npm run preview`.
+6. Generated preview output lives in `public/`; delete via `npm run clean` when needed.
 
 ### Bundle Creation
-1. Run `npm run build` - includes cleaning, linting, and bundling
-2. Vite processes and optimizes CSS into `site.css` and JS into `site.js`
-3. All assets (fonts, images, templates) are copied to correct bundle structure
-4. Final bundle is created as `build/ui-bundle.zip`
+1. Run `npm run bundle` (or `npm run build`) to produce `build/ui-bundle.zip`.
+2. The command runs CSS/JS optimizers, copies required assets, appends the UI descriptor, and zips the bundle.
+3. Bundle artifacts are staged in `build/`; only `ui-bundle.zip` needs to be published.
 
 ### Release Process
-- Automated via Release Please (GitHub Actions) which opens a release PR and, on merge, creates a semver tag and GitHub Release
-- A separate `on: release` workflow builds the UI and uploads `build/ui-bundle.zip` to the GitHub Release
-- Must pass linting to create release
-- Consumers can use the latest bundle at `https://github.com/timothysparg/antora-tldr-ui/releases/latest/download/ui-bundle.zip`
+- Automated via Release Please (GitHub Actions) which opens a release PR and, on merge, creates a semver tag and GitHub Release.
+- A separate `on: release` workflow builds the UI and uploads `build/ui-bundle.zip` to the GitHub Release.
+- Must pass linting to create the release.
+- Consumers can fetch the latest bundle from `https://github.com/timothysparg/antora-tldr-ui/releases/latest/download/ui-bundle.zip`.
 
+### Preview System (Antora-based)
+
+The preview system mirrors production by letting Antora render the sample content locally.
+
+- Component metadata lives in `preview-src/antora.yml` with `start_page: ROOT:index.adoc` and navigation defined in `modules/ROOT/nav.adoc`.
+- Preview content resides under `preview-src/modules/ROOT/pages/`; add new `.adoc` files here and register them in `nav.adoc`.
+- `preview-src/antora-playbook.yml` points Antora at the current repository (`start_path: preview-src`) and uses `ui.bundle.url: ../../src` so preview builds render with in-repo templates.
+- Run `npm run preview` for a one-off build or `npm run dev` for continuous development.
+- When structural changes cause stale output, run `npm run clean` followed by a fresh preview build.
+
+### Antora Preview Configuration and Homepage Routing
+
+- The homepage is `preview-src/modules/ROOT/pages/index.adoc`; Antora resolves it through `start_page: ROOT:index.adoc` in `antora.yml`.
+- Navigation is controlled by `preview-src/modules/ROOT/nav.adoc`. Keep entries in sync when adding or renaming pages.
+- Images referenced from preview content should live in `preview-src/modules/ROOT/images/` and use `image::ROOT:filename[]` so Antora resolves them correctly.
+- Because Antora writes to `public/`, clear that directory with `npm run clean` if routes appear stale after major changes.
+- Use `mise run validate` to confirm required Antora files exist before starting a new preview session.
+
+## Important Notes
+
+- Node.js version managed via `.mise.toml` (migrated from .nvmrc).
+- UI bundle is designed specifically for the Antora static site generator.
+- Source maps are available for JavaScript builds; CSS maps are disabled in production by default.
+- Project supports deploy previews via Netlify for pull requests.
+- Optional automation/search/documentation tools may be available via `.mcp.json`.
 ## Tooling
 
 This project may be configured with development tools to enhance automation and research.
@@ -179,7 +178,7 @@ To run the local development preview and take screenshots using the Playwright M
    # or
    npm run dev
    ```
-   The server will be available at http://localhost:5252
+   The server will be available at http://localhost:5252. `npm run dev` invokes mise to run Antora once and then attach the live-server + watchexec watchers.
 
 2. **Take Screenshots with Playwright MCP**:
    - Use `mcp__playwright__browser_navigate` to open the local development server
@@ -189,9 +188,9 @@ To run the local development preview and take screenshots using the Playwright M
    - Use `mcp__playwright__browser_close` to close the browser when finished
 
 3. **Development Server Management**:
-   - Server runs in background with live reload
-   - Changes to `src/` files automatically trigger browser refresh
-   - Use Ctrl+C to stop the development server
+   - Server runs in foreground with live reload; use another terminal for edits or background it manually
+   - Changes to `src/` themes or `preview-src/modules/ROOT` content trigger rebuilds and refreshes
+   - Use Ctrl+C once to stop all watchers; if backgrounded, `kill $(cat .devserver.pid)` then remove the pid file
 
 ### UI Modification and Validation Workflow
 
@@ -388,7 +387,7 @@ When working with Antora preview content and homepage configuration:
 - **Do NOT include agent acknowledgment lines** (e.g., "🤖 Generated with [Claude Code]") in pull request descriptions.
 - Agent attribution is handled via commit message Co-Authors sections, not PR descriptions.
 - Focus on technical details and impact of changes for human reviewers.
-- When using the GitHub CLI, authenticate on demand via 1Password: `GITHUB_TOKEN=$(op read "op://Personal/GitHub Personal Access Token/token") gh <command>`.
+- When using the GitHub CLI, authenticate on demand via 1Password: `GITHUB_TOKEN=$(op read "op://Personal/GitHub Personal Access Token/token") gh <command>`. Quick sanity check: `GITHUB_TOKEN=$(op read "op://Personal/GitHub Personal Access Token/token") gh repo list` should return your accessible repositories.
 
 ## Commit Message Format
 
@@ -427,11 +426,11 @@ Commit messages must follow this exact structure:
 - **Content**: Include specific plan section and task checklist status
 - **Example format**:
   ```
-  Plan: Commit 1 - Add Vite Dependencies and Basic Configuration
-    ✅ Add Vite and related dependencies to package.json
-    ✅ Add standardized npm scripts to package.json  
-    ✅ Run npm install successfully
-    ✅ Ensure Vite build works
+  Plan: Commit 1 - Introduce Antora preview scaffolding
+    ✅ Create `preview-src/antora.yml` and `antora-playbook.yml`
+    ✅ Migrate sample AsciiDoc pages into `modules/ROOT/pages`
+    ✅ Add mise tasks for preview/build/watch flows
+    ✅ Run `npm run preview` successfully
     ✅ Run validation tests - all pass
   ```
 
