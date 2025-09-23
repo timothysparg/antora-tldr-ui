@@ -1,0 +1,24 @@
+= Forms
+
+Sample form elements styled by the theme.
+
+[.form-example]
+====
+[%hardbreaks]
+First Name:: ____
+Email Address:: ____
+Message:: _______________
+====
+
+== Validation States
+
+[cols="1,1"]
+|===
+| State | Description
+
+| Success
+| Indicates a successful validation state.
+
+| Error
+| Highlights input fields that require user attention.
+|===

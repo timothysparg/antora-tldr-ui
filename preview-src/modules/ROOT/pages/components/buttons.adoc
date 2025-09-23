@@ -1,0 +1,13 @@
+= Buttons
+
+This page demonstrates button styles available in the UI theme.
+
+== Primary Button
+
+[.button.button-primary]
+link:#[]Primary Action
+
+== Secondary Button
+
+[.button]
+link:#[]Secondary Action

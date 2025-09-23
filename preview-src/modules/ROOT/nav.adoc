@@ -1,0 +1,6 @@
+* xref:index.adoc[Home]
+* xref:kitchen-sink.adoc[Kitchen Sink]
+* Components
+** xref:components/buttons.adoc[Buttons]
+** xref:components/forms.adoc[Forms]
+** xref:components/navigation.adoc[Navigation]

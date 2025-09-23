@@ -1,0 +1,20 @@
+= Navigation Components
+
+Showcases navigation UI patterns provided by the theme.
+
+== Sidebar Navigation
+
+Use the built-in component navigation to present module and page hierarchies.
+
+== Breadcrumbs
+
+[source,html]
+----
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumbs">
+    <li><a href="/">Home</a></li>
+    <li><a href="/docs">Docs</a></li>
+    <li>Current Page</li>
+  </ol>
+</nav>
+----
