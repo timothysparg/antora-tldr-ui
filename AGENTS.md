@@ -297,11 +297,86 @@ When working with Antora preview content and homepage configuration:
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 - After committing changes, clear the session/context if your tooling supports it
 
+## Task Planning & Logging (PLAN.md lifecycle)
+
+**Goal:** When an agent (e.g., Copilot, Claude, Gemini, Codex) is asked to perform a task, it must continuously maintain a canonical **PLAN.md** at the repo root that captures the plan, progress, and all human↔agent interactions.
+
+### Lifecycle rules
+- **On startup:** If **PLAN.md** exists, *prompt the user once* — “PLAN.md found. Should I resume this task?”  
+  - If user says **yes**, continue appending to the existing file.  
+  - If user says **no**, either (a) archive to `logs/PLAN-YYYYMMDD-HHMM.md` or (b) delete per user instruction, then start fresh.
+- **During execution:** After **every** material step (prompt exchange, tool/LLM run, code change, commit, test), append the relevant sections below, updating statuses.
+- **Completion:** When the task is verifiably done (tests pass, acceptance criteria met, user confirms), remove **PLAN.md** from the repo. If an audit trail is wanted, move it to `logs/` instead of deleting.
+
+### Required sections in PLAN.md (always kept up to date)
+1. **Task**  
+   - Short title and problem statement.  
+   - Acceptance criteria (bullet list).
+2. **Architectural Approach**  
+   - Key decisions, trade-offs, and affected components.  
+   - Alternatives considered (brief).
+3. **Implementation Plan**  
+   - Ordered steps with owners (if multi-agent) and estimated scope.  
+   - **Status** per step: `todo | in-progress | blocked | done` with timestamps.
+4. **Breakdown & Progress**  
+   - Checklist of sub-tasks with current % complete.  
+   - Blocking issues and links (PRs, commits, issues).
+5. **User Prompts & Agent Responses (chronological log)**  
+   - For each turn: timestamp, agent name, *user prompt*, *agent response summary*.  
+   - Include key decisions or commands issued; elide verbose outputs unless essential.
+6. **LLMs & Tools Used**  
+   - Running list of LLMs (e.g., Copilot, Claude, Gemini, Codex) and tools (linters, build, scripts) invoked for this task, with purpose per entry.
+
+#### Recommended PLAN.md template
+```markdown
+# Task
+- **Title:** …
+- **Problem:** …
+- **Acceptance Criteria:** 
+  - [ ] …
+
+## Architectural Approach
+- Decisions: …
+- Trade-offs: …
+- Alternatives: …
+
+## Implementation Plan
+| Step | Description | Owner | Status | Notes | Updated |
+|------|-------------|-------|--------|-------|---------|
+| 1    | …           | …     | todo   | …     | 2025-09-22 10:15 |
+
+## Breakdown & Progress
+- Overall: 0–100% (update as you go)
+- Sub-tasks:
+  - [ ] …
+  - [ ] …
+
+## User Prompts & Agent Responses (log)
+- **2025-09-22 10:12** · *User:* “…”
+  - *Agent (Claude Code):* summary of response/commands
+
+## LLMs & Tools Used
+- Claude Code — plan synthesis, refactor suggestions
+- GitHub Copilot — inline code completions
+- Gemini — test generation
+- hk, Biome, stylelint, djlint — lint/fix
+```
+
+### Agent execution rules
+- Always create/update **PLAN.md** on first actionable prompt for a task.  
+- After each tool/LLM invocation or code change, update **Implementation Plan** statuses and **User Prompts & Agent Responses**.  
+- Prefer concise summaries; link to commits/PRs instead of pasting large diffs.  
+- Never include proprietary model internals; list only tool/model names you invoked and why.  
+- If switching agents, the new agent must read **PLAN.md** first and continue the same structure.
+
+### Privacy & issues/PR hygiene
+- Do **not** paste **PLAN.md** content into Issues/PR descriptions. Summarize instead and link to commits. Keep **PLAN.md** as a working note that’s deleted or archived on completion, as above.
+
 ## Creating GitHub Issues (agents)
 
 - Use descriptive, human-readable titles (avoid conventional commit prefixes).
 - Include summary, motivation, and actionable tasks so maintainers can execute without local context.
-- Only reference artifacts available in the repository or public sources; omit local-only notes such as PLAN.md.
+- Only reference artifacts available in the repository or public sources; omit local-only notes such as **PLAN.md**.
 - Capture dependencies explicitly when one issue blocks or requires another.
 - Add a brief acknowledgment comment if it matches the repository's collaboration style.
 
@@ -312,6 +387,7 @@ When working with Antora preview content and homepage configuration:
 - **Do NOT include agent acknowledgment lines** (e.g., "🤖 Generated with [Claude Code]") in pull request descriptions.
 - Agent attribution is handled via commit message Co-Authors sections, not PR descriptions.
 - Focus on technical details and impact of changes for human reviewers.
+- When using the GitHub CLI, authenticate on demand via 1Password: `GITHUB_TOKEN=$(op read "op://Personal/GitHub Personal Access Token/token") gh <command>`.
 
 ## Commit Message Format
 
@@ -321,7 +397,7 @@ Commit messages must follow this exact structure:
 
 1. **Subject line**: Conventional commits format (e.g., "feat:", "fix:", "refactor:")
 2. **Body**: Detailed description of changes (optional)
-3. **Plan section**: When working from a plan (e.g., plan.md), include relevant plan details - fourth to last
+3. **Plan section**: When working from a plan (e.g., **PLAN.md**), include relevant plan details – fourth to last
 4. **User-Prompt section**: Original user request(s) - third to last
 5. **Resolves section**: GitHub issue resolution (e.g., "Resolves: #3") - second to last  
 6. **Co-Authors section**: Attribution - must be the last lines
