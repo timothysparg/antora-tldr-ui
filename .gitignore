@@ -1,8 +1,10 @@
 /build/
+/public/
 /node_modules/
 /preview-dist/
 /.playwright-mcp/
 /preview-output/
+ui-bundle.zip
 PLAN.md
 .eslintcache
 .stylelintcache

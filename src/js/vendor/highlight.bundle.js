@@ -1,5 +1,5 @@
 (() => {
-	var hljs = require("highlight.js/lib/highlight");
+	var hljs = require("highlight.js/lib/core");
 	hljs.registerLanguage(
 		"asciidoc",
 		require("highlight.js/lib/languages/asciidoc"),

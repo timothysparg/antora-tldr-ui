@@ -1,0 +1,14 @@
+bundle:
+  url: ./
+  snapshot: true
+  layouts:
+    - default
+    - 404
+static_files:
+  - img/**/*
+  - fonts/**/*
+  - helpers/**/*
+  - layouts/**/*
+  - partials/**/*
+  - css/**/*
+  - js/**/*

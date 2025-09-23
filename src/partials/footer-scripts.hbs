@@ -1,11 +1,9 @@
-<script type="module"
-        id="site-script"
+<script id="site-script"
         src="{{{uiRootPath}}}/js/site.js"
-        data-ui-root-path="{{{uiRootPath}}}"></script>
-<script type="module" async src="{{{uiRootPath}}}/js/vendor/tabs.bundle.js"></script>
-<script type="module"
-        async
-        src="{{{uiRootPath}}}/js/vendor/highlight.bundle.js"></script>
+        data-ui-root-path="{{{uiRootPath}}}"
+        defer></script>
+<script src="{{{uiRootPath}}}/js/vendor/tabs.bundle.js" defer></script>
+<script src="{{{uiRootPath}}}/js/vendor/highlight.bundle.js" defer></script>
 {{#with (resolvePage page.relativeSrcPath model=false)}}
     {{#unless (eq ./asciidoc.attributes.stem undefined)}}
     <script type="text/x-mathjax-config">
@@ -31,7 +29,7 @@ MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
 {{#if env.ALGOLIA_API_KEY }}
     <script async
             id="search-script"
-            src="{{{uiRootPath}}}/js/vendor/docsearch.js"
+            src="{{{uiRootPath}}}/js/vendor/docsearch.bundle.js"
             {{#if env.ALGOLIA_APP_ID}}
             data-app-id="{{env.ALGOLIA_APP_ID}}"
             {{/if}}
