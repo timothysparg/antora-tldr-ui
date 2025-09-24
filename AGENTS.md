@@ -13,7 +13,7 @@ This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the As
 - `mise run preview` – Execute a single Antora build; regenerates `public/` and refreshes `ui-bundle.zip`.
 - `mise run bundle` – Produce the distribution archive (runs CSS/JS optimizers and asset packaging). This task exports a `TAG` environment variable (defaulting to `v${package.json.version}`) so Vite’s bundler can stamp the version into `build/ui.yml`; set `TAG` explicitly when you need a custom tag (e.g., release candidates).
 - `mise run clean` – Remove `public/`, `build/`, `.antora-cache`, and `ui-bundle.zip`.
-- `hk run check --all` / `hk run fix --all` – Run or auto-fix lint rules through hk (Biome, stylelint, djLint, actionlint).
+- `hk run check --all` / `hk run fix --all` – Run or auto-fix lint rules through hk (Biome, stylelint, djLint, actionlint, `tsc --noEmit`, and `mise run validate`).
 
 ### Specialized Tasks
 - `mise run watch:preview` – Watch Antora preview content (`preview-src/modules/ROOT`) and rebuild the site when AsciiDoc changes.

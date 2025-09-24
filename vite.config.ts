@@ -8,7 +8,7 @@ import postcssCalc from "postcss-calc";
 import postcssCustomProperties from "postcss-custom-properties";
 import postcssImport from "postcss-import";
 import postcssUrl from "postcss-url";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin, type UserConfig } from "vite";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === "production";
@@ -26,7 +26,7 @@ const collectFiles = async (directory: string): Promise<string[]> => {
 
 export default defineConfig(async () => {
 	const { viteStaticCopy } = await import("vite-plugin-static-copy");
-	const archivePlugin = {
+	const archivePlugin: Plugin = {
 		name: "ui-bundle-zip",
 		apply: "build" as const,
 		enforce: "post" as const,
@@ -71,7 +71,13 @@ export default defineConfig(async () => {
 		},
 	};
 
-	return {
+	const customPropertiesPlugin = postcssCustomProperties({
+		disableDeprecationNotice: true,
+		preserve: true,
+	});
+	const calcPlugin = postcssCalc({});
+
+	const config: UserConfig = {
 		root: __dirname,
 		base: "",
 		build: {
@@ -147,11 +153,8 @@ export default defineConfig(async () => {
 							return url;
 						},
 					}),
-					postcssCustomProperties({
-						disableDeprecationNotice: true,
-						preserve: true,
-					}),
-					postcssCalc(),
+					customPropertiesPlugin,
+					calcPlugin,
 					autoprefixer(),
 					...(isProduction ? [cssnano()] : []),
 				],
@@ -192,4 +195,6 @@ export default defineConfig(async () => {
 			archivePlugin,
 		],
 	};
+
+	return config;
 });
