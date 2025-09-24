@@ -135,8 +135,6 @@ To automatically fix what can be corrected, run:
 
  $ hk run fix --all
 
-The npm scripts `npm run lint` and `npm run fix` delegate to these hk tasks so existing automation continues to work.
-
 The linting workflow includes:
 
 * **JavaScript/TypeScript**: Biome for code quality and formatting
@@ -153,18 +151,9 @@ These pages provide a representative sample and kitchen sink of content from the
 
 To build the UI and preview it in a local web server, run the development server:
 
- $ npm start
+ $ mise run dev
 
-This command builds the preview pages with Antora and starts live-server alongside watcher processes for rapid feedback.
-
-[TIP]
-====
-You can also use the `dev` command directly:
-
- $ npm run dev
-
-The development server invokes `mise run dev`, which runs Antora once to populate [.path]_public/_ and then launches live-server plus watchexec watchers for preview content and UI theme files.
-====
+This command runs the Antora preview build once to populate [.path]_public/_ and then launches live-server plus watchexec watchers for preview content and UI theme files. Mise orchestrates the dependent processes so you get fast feedback without juggling multiple terminals.
 
 You'll see a URL listed in the output of this command:
 
@@ -176,7 +165,7 @@ You'll see a URL listed in the output of this command:
 
 Navigate to this URL to preview the site locally.
 
-While this command is running, any changes you make to `preview-src/modules/ROOT` or the files under [.path]_src/_ will trigger mise's watch tasks to rerun `mise run preview`; live-server automatically reloads the browser when the Antora output changes.
+While this command is running, any changes you make to `preview-src/modules/ROOT` or the files under [.path]_src/_ will trigger mise's watch tasks to rerun the preview build; live-server automatically reloads the browser when the Antora output changes.
 
 Press kbd:[Ctrl+C] to stop the preview server and end the continuous build.
 
@@ -184,19 +173,13 @@ Press kbd:[Ctrl+C] to stop the preview server and end the continuous build.
 
 If you need to package the UI so you can use it to generate the documentation site locally, run the following command:
 
- $ npm run build
+ $ mise run bundle
 
-This command runs linting (via hk when preconfigured), cleans previous builds, and executes `mise run bundle`, which drives PostCSS, esbuild, and asset packaging.
-If any errors are reported by lint, you'll need to fix them.
+This command executes the CSS/JS build steps, copies static assets, and bundles everything into a distributable archive.
+If any errors are reported during the build, you'll need to fix them before the bundle is produced.
 
 When the command completes successfully, the UI bundle will be available at [.path]_build/ui-bundle.zip_.
 You can point Antora at this bundle using the `--ui-bundle-url` command-line option.
-
-Alternatively, you can use the `bundle` command:
-
- $ npm run bundle
-
-Both commands produce the same ui-bundle.zip file.
 
 ==== Source Maps
 

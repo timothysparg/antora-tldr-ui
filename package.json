@@ -9,14 +9,8 @@
 		"url": "https://github.com/timothysparg/antora-tldr-ui"
 	},
 	"scripts": {
-		"start": "npm run dev",
-		"dev": "mise run dev",
-		"preview": "mise run preview",
-		"build": "mise run bundle",
-		"bundle": "mise run bundle",
-		"clean": "mise run clean",
-		"lint": "mise exec -- hk run check --all",
-		"fix": "mise exec -- hk run fix --all"
+		"lint": "hk run check --all",
+		"fix": "hk run fix --all"
 	},
 	"engines": {
 		"node": ">=18.0.0"

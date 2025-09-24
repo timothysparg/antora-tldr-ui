@@ -9,11 +9,11 @@ This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the As
 ## Development Commands
 
 ### Common Development Tasks
-- `npm run dev` – Build the UI bundle once, then launch the live preview stack (mise runs live-server plus preview/theme watchers). Use Ctrl+C to stop. If you background the process manually, clean up `.devserver.pid` afterward.
-- `npm run preview` – Execute a single Antora build via `mise run preview`; regenerates `public/` and refreshes `ui-bundle.zip`.
-- `npm run bundle` / `npm run build` – Produce the distribution archive through `mise run bundle` (runs CSS/JS optimizers and asset packaging).
-- `npm run clean` – Remove `public/`, `build/`, `.antora-cache`, and `ui-bundle.zip`.
-- `npm run lint` / `npm run fix` – Run or auto-fix lint rules through hk (Biome, stylelint, djLint, actionlint).
+- `mise run dev` – Build the UI bundle once, then launch the live preview stack (live-server plus preview/theme watchers). Use Ctrl+C to stop. If you background the process manually, clean up `.devserver.pid` afterward.
+- `mise run preview` – Execute a single Antora build; regenerates `public/` and refreshes `ui-bundle.zip`.
+- `mise run bundle` – Produce the distribution archive (runs CSS/JS optimizers and asset packaging).
+- `mise run clean` – Remove `public/`, `build/`, `.antora-cache`, and `ui-bundle.zip`.
+- `hk run check --all` / `hk run fix --all` – Run or auto-fix lint rules through hk (Biome, stylelint, djLint, actionlint).
 
 ### Specialized Tasks
 - `mise run watch:preview` – Watch Antora preview content (`preview-src/modules/ROOT`) and rebuild the site when AsciiDoc changes.
@@ -116,12 +116,12 @@ Fontsource packages are imported through CSS (`@import '@fontsource/<family>/<we
 1. Run `mise install` to provision Node.js, hk, watchexec, and other CLI dependencies.
 2. Run `hk setup` to install hk's git hooks locally.
 3. Run `npm ci` to install Node.js dependencies.
-4. Launch the preview loop with `npm run dev`. This builds the bundle, starts live-server on http://127.0.0.1:5252, and begins watching both preview content and theme sources.
-5. To rebuild once without watchers, use `npm run preview`.
-6. Generated preview output lives in `public/`; delete via `npm run clean` when needed.
+4. Launch the preview loop with `mise run dev`. This builds the bundle, starts live-server on http://127.0.0.1:5252, and begins watching both preview content and theme sources.
+5. To rebuild once without watchers, use `mise run preview`.
+6. Generated preview output lives in `public/`; delete via `mise run clean` when needed.
 
 ### Bundle Creation
-1. Run `npm run bundle` (or `npm run build`) to produce `build/ui-bundle.zip`.
+1. Run `mise run bundle` to produce `build/ui-bundle.zip`.
 2. The command runs CSS/JS optimizers, copies required assets, appends the UI descriptor, and zips the bundle.
 3. Bundle artifacts are staged in `build/`; only `ui-bundle.zip` needs to be published.
 
@@ -138,15 +138,15 @@ The preview system mirrors production by letting Antora render the sample conten
 - Component metadata lives in `preview-src/antora.yml` with `start_page: ROOT:index.adoc` and navigation defined in `modules/ROOT/nav.adoc`.
 - Preview content resides under `preview-src/modules/ROOT/pages/`; add new `.adoc` files here and register them in `nav.adoc`.
 - `preview-src/antora-playbook.yml` points Antora at the current repository (`start_path: preview-src`) and uses `ui.bundle.url: ../../src` so preview builds render with in-repo templates.
-- Run `npm run preview` for a one-off build or `npm run dev` for continuous development.
-- When structural changes cause stale output, run `npm run clean` followed by a fresh preview build.
+- Run `mise run preview` for a one-off build or `mise run dev` for continuous development.
+- When structural changes cause stale output, run `mise run clean` followed by a fresh preview build.
 
 ### Antora Preview Configuration and Homepage Routing
 
 - The homepage is `preview-src/modules/ROOT/pages/index.adoc`; Antora resolves it through `start_page: ROOT:index.adoc` in `antora.yml`.
 - Navigation is controlled by `preview-src/modules/ROOT/nav.adoc`. Keep entries in sync when adding or renaming pages.
 - Images referenced from preview content should live in `preview-src/modules/ROOT/images/` and use `image::ROOT:filename[]` so Antora resolves them correctly.
-- Because Antora writes to `public/`, clear that directory with `npm run clean` if routes appear stale after major changes.
+- Because Antora writes to `public/`, clear that directory with `mise run clean` if routes appear stale after major changes.
 - Use `mise run validate` to confirm required Antora files exist before starting a new preview session.
 
 ## Important Notes
@@ -174,11 +174,9 @@ To run the local development preview and take screenshots using the Playwright M
 
 1. **Start Development Server**:
    ```bash
-   npm start
-   # or
-   npm run dev
+   mise run dev
    ```
-   The server will be available at http://localhost:5252. `npm run dev` invokes mise to run Antora once and then attach the live-server + watchexec watchers.
+   The server will be available at http://localhost:5252. This task runs Antora once and then attaches the live-server + watchexec watchers.
 
 2. **Take Screenshots with Playwright MCP**:
    - Use `mcp__playwright__browser_navigate` to open the local development server
@@ -264,9 +262,9 @@ When working with Antora preview content and homepage configuration:
 - **Root Cause**: Cached build files or conflicting file names prevent proper routing
 - **Solution Process**:
   1. Remove any conflicting files (e.g., old `index.adoc` files with different content)
-  2. Run `npm run clean` to clear all build artifacts
+ 2. Run `mise run clean` to clear all build artifacts
   3. Ensure only one `index.adoc` file exists with the desired homepage content
-  4. Restart the development server with `npm start`
+ 4. Restart the development server with `mise run dev`
   5. Verify that `public/index.html` is generated with correct content
 
 #### Preview Content File Organization
@@ -276,7 +274,7 @@ When working with Antora preview content and homepage configuration:
 
 #### Build Cache Considerations
 - Build artifacts are cached in the `public/` directory
-- When making structural changes to content files or routing configuration, always run `npm run clean` followed by a fresh `npm start`
+- When making structural changes to content files or routing configuration, always run `mise run clean` followed by a fresh `mise run dev`
 - Changes to `ui-model.yml` require a server restart to take effect
 
 ## Important Notes
@@ -291,7 +289,7 @@ When working with Antora preview content and homepage configuration:
 
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @README.adoc
 - Before committing check if the changes that have been introduced outdate or necessitate changes in the @AGENTS.md
-- Before committing run `mise exec -- hk run check --all` (or `npm run lint`) and apply `mise exec -- hk run fix --all` as needed so the commit can proceed
+- Before committing run `hk run check --all` and apply `hk run fix --all` as needed so the commit can proceed
 - When committing follow the conventional commits syntax for commit messages
 - If changes do not seem like a logical grouping, make a suggestion of how to group the changes into multiple commits to the user
 - After committing changes, clear the session/context if your tooling supports it
@@ -430,7 +428,7 @@ Commit messages must follow this exact structure:
     ✅ Create `preview-src/antora.yml` and `antora-playbook.yml`
     ✅ Migrate sample AsciiDoc pages into `modules/ROOT/pages`
     ✅ Add mise tasks for preview/build/watch flows
-    ✅ Run `npm run preview` successfully
+    ✅ Run `mise run preview` successfully
     ✅ Run validation tests - all pass
   ```
 
