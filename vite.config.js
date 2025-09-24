@@ -8,12 +8,12 @@ import postcssCalc from "postcss-calc";
 import postcssCustomProperties from "postcss-custom-properties";
 import postcssImport from "postcss-import";
 import postcssUrl from "postcss-url";
-import { defineConfig, type Plugin, type UserConfig } from "vite";
+import { defineConfig } from "vite";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === "production";
 
-const collectFiles = async (directory: string): Promise<string[]> => {
+const collectFiles = async (directory) => {
 	const dirents = await fs.readdir(directory, { withFileTypes: true });
 	const nested = await Promise.all(
 		dirents.map((dirent) => {
@@ -26,10 +26,10 @@ const collectFiles = async (directory: string): Promise<string[]> => {
 
 export default defineConfig(async () => {
 	const { viteStaticCopy } = await import("vite-plugin-static-copy");
-	const archivePlugin: Plugin = {
+	const archivePlugin = {
 		name: "ui-bundle-zip",
-		apply: "build" as const,
-		enforce: "post" as const,
+		apply: "build",
+		enforce: "post",
 		async closeBundle() {
 			const versionTag =
 				process.env.TAG ?? `v${process.env.npm_package_version ?? ""}`;
@@ -77,7 +77,7 @@ export default defineConfig(async () => {
 	});
 	const calcPlugin = postcssCalc({});
 
-	const config: UserConfig = {
+	const config = {
 		root: __dirname,
 		base: "",
 		build: {
@@ -109,7 +109,7 @@ export default defineConfig(async () => {
 							return "assets/[name]-[hash][extname]";
 						}
 
-						const cssNameMap: Record<string, string> = {
+						const cssNameMap = {
 							"site.css": "css/site.css",
 							"home.css": "css/home.css",
 							"css/site.css": "css/site.css",
@@ -131,7 +131,7 @@ export default defineConfig(async () => {
 					postcssImport(),
 					postcssUrl({
 						url: ({ url }) => {
-							const fontRewrites: Array<{ prefix: string; dest: string }> = [
+							const fontRewrites = [
 								{
 									prefix: "../../node_modules/@fontsource/roboto/files/",
 									dest: "../fonts/",
