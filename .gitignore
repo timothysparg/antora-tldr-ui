@@ -3,6 +3,7 @@
 /node_modules/
 /preview-dist/
 /.playwright-mcp/
+/.antora-cache/
 /preview-output/
 ui-bundle.zip
 PLAN.md

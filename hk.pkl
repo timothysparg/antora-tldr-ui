@@ -12,7 +12,7 @@ local linters = new Mapping<String, Step> {
    ["stylelint"] = (Builtins.stylelint) {
       check = "npx -y stylelint --cache --cache-location .stylelintcache {{ files }}"
       fix = "npx -y stylelint --cache --cache-location .stylelintcache --fix {{ files }}"
-  }
+   }
    ["djlint"] = new Step {
       glob = List("**/*.hbs")
       exclude = List(
@@ -20,6 +20,15 @@ local linters = new Mapping<String, Step> {
       )
       check = "djlint {{ files }} --profile=handlebars --lint"
       fix = "djlint {{ files }} --profile=handlebars --reformat"
+   }
+   ["validate"] = new Step {
+      glob = List("**/*")
+      exclude = List(
+         "node_modules/**",
+         "build/**",
+         "public/**"
+      )
+      check = "mise run validate"
    }
 }
 

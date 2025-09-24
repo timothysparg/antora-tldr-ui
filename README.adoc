@@ -40,6 +40,7 @@ This project provides a blog-focused UI theme for Antora sites.
 It provides both the visual theme and user interactions optimized for blog-style content.
 The UI bundle that this project produces is designed to be used with Antora.
 It bundles the HTML templates (layouts, partials, and helpers), CSS, JavaScript, fonts, and site-wide images.
+Vite (configured in [.path]_vite.build.config.ts_) handles the JS/CSS build pipeline, while Mise tasks coordinate template copies, Antora preview builds, and packaging.
 The rest of the material for the docs site comes from the content repositories.
 
 == Usage
@@ -141,6 +142,7 @@ The linting workflow includes:
 * **CSS**: stylelint for style validation and best practices
 * **HTML Templates**: djLint for Handlebars template validation and accessibility checks
 * **GitHub Actions**: actionlint for workflow validation
+* **Structure/Prereqs**: `mise run validate` to ensure Antora configuration and UI directories exist before builds
 
 === Preview the UI
 
@@ -175,7 +177,8 @@ If you need to package the UI so you can use it to generate the documentation si
 
  $ mise run bundle
 
-This command executes the CSS/JS build steps, copies static assets, and bundles everything into a distributable archive.
+This command invokes `npm run bundle` (Vite build with Rollup multi-entry configuration) to generate optimized CSS/JS assets, then copies Handlebars templates, helpers, and images into the [.path]_build/_ directory before zipping the UI bundle. The mise task exports a `TAG` environment variable (defaulting to `v${package.json.version}`) so Vite can write the version into `build/ui.yml`; pass `TAG=...` when you need a non-default tag.
+The PostCSS pipeline used by Vite is inlined in the Vite config, so no separate [.path]_postcss.config.cjs_ file is required.
 If any errors are reported during the build, you'll need to fix them before the bundle is produced.
 
 When the command completes successfully, the UI bundle will be available at [.path]_build/ui-bundle.zip_.

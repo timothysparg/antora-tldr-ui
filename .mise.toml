@@ -65,92 +65,12 @@ run = [
   { task = "watch:theme" }
 ]
 
-[tasks."build:css"]
-description = "Optimize CSS for production"
-run = """
-  NODE_ENV=production npx postcss src/css/site.css src/css/home.css \
-    --dir build/css
-  python - <<'PY'
-from pathlib import Path
-for path in Path('build/css').glob('*.css'):
-    text = path.read_text()
-    text = text.replace('../../node_modules/@fontsource/roboto/files/', '../fonts/roboto/')
-    text = text.replace('../../node_modules/@fontsource/roboto-mono/files/', '../fonts/roboto-mono/')
-    text = text.replace('../../node_modules/@fontsource/comfortaa/files/', '../fonts/comfortaa/')
-    path.write_text(text)
-PY
-"""
-sources = ["src/css/**/*.css", "postcss.config.cjs"]
-outputs = ["build/css/site.css", "build/css/home.css"]
-
-[tasks."build:js"]
-description = "Optimize JS for production"
-run = """
-  npx esbuild \
-    src/js/site.js \
-    src/js/vendor/tabs.bundle.js \
-    src/js/vendor/highlight.bundle.js \
-    src/js/vendor/docsearch.bundle.js \
-    --bundle \
-    --minify \
-    --sourcemap=external \
-    --outdir=build/js \
-    --outbase=src/js \
-    --format=iife
-"""
-sources = ["src/js/**/*.js"]
-outputs = [
-  "build/js/site.js",
-  "build/js/vendor/tabs.bundle.js",
-  "build/js/vendor/highlight.bundle.js",
-  "build/js/vendor/docsearch.bundle.js"
-]
-
-[tasks."build:assets"]
-description = "Copy static assets for bundling"
-run = """
-  mkdir -p build/css build/img build/fonts build/layouts build/partials build/helpers build/js/vendor
-  cp -r src/img/. build/img
-  if [ -d src/fonts ]; then cp -r src/fonts/. build/fonts; fi
-  cp -r src/layouts/. build/layouts
-  cp -r src/partials/. build/partials
-  cp -r src/helpers/. build/helpers
-  if [ -d src/css/vendor ]; then cp -r src/css/vendor/. build/css/vendor; fi
-  mkdir -p build/fonts/roboto build/fonts/roboto-mono build/fonts/comfortaa
-  cp -r node_modules/@fontsource/roboto/files/. build/fonts/roboto
-  cp -r node_modules/@fontsource/roboto-mono/files/. build/fonts/roboto-mono
-  cp -r node_modules/@fontsource/comfortaa/files/. build/fonts/comfortaa
-  cp src/ui.yml build/ui.yml
-"""
-sources = [
-  "src/{img,fonts,layouts,partials,helpers,css/vendor}/**/*",
-  "src/ui.yml",
-  "node_modules/@fontsource/{roboto,roboto-mono,comfortaa}/files/**/*"
-]
-outputs = [
-  "build/img/**/*",
-  "build/fonts/**/*",
-  "build/layouts/**/*",
-  "build/partials/**/*",
-  "build/helpers/**/*",
-  "build/css/vendor/**/*",
-  "build/ui.yml"
-]
-
 [tasks.bundle]
 description = "Create UI bundle for distribution"
-depends = ["build:css", "build:js", "build:assets"]
 run = """
   TAG=${TAG:-v$(node -p "require('./package.json').version")}
-  if [ -f build/ui.yml ]; then echo "version: ${TAG}" >> build/ui.yml; fi
-  cd build
-  zip -r ui-bundle.zip . \
-    -x '*.map' \
-    -x 'node_modules/*' \
-    -x '.git/*' \
-    -x '*.bak' \
-    -x '.DS_Store'
-  mv ui-bundle.zip ../
+  export TAG
+  npm run bundle
 """
 outputs = ["ui-bundle.zip"]
 

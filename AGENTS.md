@@ -4,14 +4,14 @@ This file provides guidance to AI coding agents working with code in this reposi
 
 ## Project Overview
 
-This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the Asciidoctor documentation site. The project builds on top of Antora's default UI, but the preview workflow now relies on Antora itself (driven by mise tasks) instead of a bespoke Vite server. CSS and JavaScript assets are produced with PostCSS and esbuild, and the resulting bundle ships the Handlebars layouts, partials, helpers, fonts, and images consumed by Antora.
+This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the Asciidoctor documentation site. The project builds on top of Antora's default UI, but the preview workflow now relies on Antora itself (driven by mise tasks). Vite (configured in `vite.build.config.ts`) orchestrates the JS/CSS build pipeline using PostCSS and esbuild, and the resulting bundle ships the Handlebars layouts, partials, helpers, fonts, and images consumed by Antora.
 
 ## Development Commands
 
 ### Common Development Tasks
 - `mise run dev` – Build the UI bundle once, then launch the live preview stack (live-server plus preview/theme watchers). Use Ctrl+C to stop. If you background the process manually, clean up `.devserver.pid` afterward.
 - `mise run preview` – Execute a single Antora build; regenerates `public/` and refreshes `ui-bundle.zip`.
-- `mise run bundle` – Produce the distribution archive (runs CSS/JS optimizers and asset packaging).
+- `mise run bundle` – Produce the distribution archive (runs CSS/JS optimizers and asset packaging). This task exports a `TAG` environment variable (defaulting to `v${package.json.version}`) so Vite’s bundler can stamp the version into `build/ui.yml`; set `TAG` explicitly when you need a custom tag (e.g., release candidates).
 - `mise run clean` – Remove `public/`, `build/`, `.antora-cache`, and `ui-bundle.zip`.
 - `hk run check --all` / `hk run fix --all` – Run or auto-fix lint rules through hk (Biome, stylelint, djLint, actionlint).
 
@@ -19,7 +19,7 @@ This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the As
 - `mise run watch:preview` – Watch Antora preview content (`preview-src/modules/ROOT`) and rebuild the site when AsciiDoc changes.
 - `mise run watch:theme` – Watch UI theme sources (`src/layouts`, `src/partials`, `src/helpers`, `src/css`, `src/js`, `src/img`) and trigger preview rebuilds. A `--` separator is already baked into the task so watchexec handles flags correctly.
 - `mise run serve` – Serve the latest `public/` directory on http://127.0.0.1:5252 without watchers.
-- `mise run validate` – Sanity-check that required Antora files and directories exist before attempting a build.
+- `mise run validate` – Sanity-check that required Antora files and directories exist before attempting a build. Expand this guard (or wire it into hk tasks) if future workflows need stronger preflight checks.
 
 ### Preview Dev Server
 - `mise run dev` orchestrates the full developer loop: it runs `mise run preview` once, then starts `mise run serve`, `mise run watch:preview`, and `mise run watch:theme`. All three tasks stream to the terminal; press Ctrl+C once to shut them down cleanly.
@@ -31,8 +31,8 @@ This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the As
 ### Build System
 - **Antora CLI**: `preview-src/antora-playbook.yml` drives preview generation against the checked-out UI sources. Antora writes the static site to `public/`.
 - **Mise**: Orchestrates tool installation and wraps repeatable tasks (`preview`, `bundle`, `dev`, `watch:*`, `clean`).
-- **PostCSS**: Processes `src/css/site.css` and `src/css/home.css`, applying imports, custom properties, autoprefixer, and minification for production bundles.
-- **esbuild**: Bundles and minifies JavaScript entry points, including vendored tab/document search helpers.
+- **Vite**: Library-mode build defined in `vite.build.config.ts` emits JS and CSS bundles (minified via esbuild) and copies referenced fonts through PostCSS.
+- **PostCSS**: Inline plugin chain (import, url copy, custom properties, calc, autoprefixer, cssnano) executes inside the Vite build to produce `css/site.css` and `css/home.css`.
 - **live-server + watchexec**: Provide local serving and rebuild-on-change flows during development.
 
 ### Source Structure
@@ -99,8 +99,8 @@ The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose 
 
 ### Key Technologies
 - **Antora** – Generates preview content directly from the current repository state.
+- **Vite** – Bundles JavaScript, extracts CSS, and emits static assets for the UI bundle.
 - **PostCSS** – Handles CSS composition and optimization.
-- **esbuild** – Bundles JavaScript for production usage.
 - **Handlebars** – Template engine for HTML generation (templates copied into the bundle).
 - **Highlight.js** – Syntax highlighting (v11.11.1).
 - **Fontsource** – Provides self-hosted font files that are copied into the bundle.
@@ -108,7 +108,7 @@ The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose 
 
 ### Font Management
 
-Fontsource packages are imported through CSS (`@import '@fontsource/<family>/<weight>.css'`). During `mise run bundle`, the `build:assets` task copies the referenced font files from `node_modules/@fontsource/*/files/` into `build/fonts/`, and URL rewriting in `build:css` ensures the bundle references those local copies. Adding a new font requires installing the appropriate Fontsource package, importing the desired weights in `src/css/fonts.css`, and updating any CSS variables in `src/css/vars.css`.
+Fontsource packages are imported through CSS (`@import '@fontsource/<family>/<weight>.css'`). During `mise run bundle`, Vite (via `vite-plugin-static-copy` and a PostCSS rewrite) copies the referenced font files from `node_modules/@fontsource/*/files/` into `build/fonts/` and rewrites `url(...)` references to target those local copies. Adding a new font requires installing the appropriate Fontsource package, importing the desired weights in `src/css/fonts.css`, and updating any CSS variables in `src/css/vars.css`.
 
 ## Development Workflow
 
@@ -122,7 +122,7 @@ Fontsource packages are imported through CSS (`@import '@fontsource/<family>/<we
 
 ### Bundle Creation
 1. Run `mise run bundle` to produce `build/ui-bundle.zip`.
-2. The command runs CSS/JS optimizers, copies required assets, appends the UI descriptor, and zips the bundle.
+2. The command runs Vite's production build, copies templates/assets/fonts, appends the UI descriptor, and zips the bundle.
 3. Bundle artifacts are staged in `build/`; only `ui-bundle.zip` needs to be published.
 
 ### Release Process
@@ -138,7 +138,7 @@ The preview system mirrors production by letting Antora render the sample conten
 - Component metadata lives in `preview-src/antora.yml` with `start_page: ROOT:index.adoc` and navigation defined in `modules/ROOT/nav.adoc`.
 - Preview content resides under `preview-src/modules/ROOT/pages/`; add new `.adoc` files here and register them in `nav.adoc`.
 - `preview-src/antora-playbook.yml` points Antora at the current repository (`start_path: preview-src`) and uses `ui.bundle.url: ../../src` so preview builds render with in-repo templates.
-- Run `mise run preview` for a one-off build or `mise run dev` for continuous development.
+- Run `mise run preview` for a one-off build or `mise run dev` for continuous development. Both paths call `mise run bundle`, which executes the Vite build before Antora regenerates the preview content.
 - When structural changes cause stale output, run `mise run clean` followed by a fresh preview build.
 
 ### Antora Preview Configuration and Homepage Routing
