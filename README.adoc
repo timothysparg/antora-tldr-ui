@@ -40,7 +40,7 @@ This project provides a blog-focused UI theme for Antora sites.
 It provides both the visual theme and user interactions optimized for blog-style content.
 The UI bundle that this project produces is designed to be used with Antora.
 It bundles the HTML templates (layouts, partials, and helpers), CSS, JavaScript, fonts, and site-wide images.
-Vite (configured in [.path]_vite.build.config.ts_) handles the JS/CSS build pipeline, while Mise tasks coordinate template copies, Antora preview builds, and packaging.
+Vite (configured in [.path]_vite.config.ts_) handles the JS/CSS build pipeline, while Mise tasks coordinate template copies, Antora preview builds, and packaging.
 The rest of the material for the docs site comes from the content repositories.
 
 == Usage

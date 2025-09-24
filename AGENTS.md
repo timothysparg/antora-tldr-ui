@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents working with code in this reposi
 
 ## Project Overview
 
-This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the Asciidoctor documentation site. The project builds on top of Antora's default UI, but the preview workflow now relies on Antora itself (driven by mise tasks). Vite (configured in `vite.build.config.ts`) orchestrates the JS/CSS build pipeline using PostCSS and esbuild, and the resulting bundle ships the Handlebars layouts, partials, helpers, fonts, and images consumed by Antora.
+This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the Asciidoctor documentation site. The project builds on top of Antora's default UI, but the preview workflow now relies on Antora itself (driven by mise tasks). Vite (configured in `vite.config.ts`) orchestrates the JS/CSS build pipeline using PostCSS and esbuild, and the resulting bundle ships the Handlebars layouts, partials, helpers, fonts, and images consumed by Antora.
 
 ## Development Commands
 
@@ -31,7 +31,7 @@ This is the Asciidoctor Docs UI project – a custom Antora UI bundle for the As
 ### Build System
 - **Antora CLI**: `preview-src/antora-playbook.yml` drives preview generation against the checked-out UI sources. Antora writes the static site to `public/`.
 - **Mise**: Orchestrates tool installation and wraps repeatable tasks (`preview`, `bundle`, `dev`, `watch:*`, `clean`).
-- **Vite**: Library-mode build defined in `vite.build.config.ts` emits JS and CSS bundles (minified via esbuild) and copies referenced fonts through PostCSS.
+- **Vite**: Library-mode build defined in `vite.config.ts` emits JS and CSS bundles (minified via esbuild) and copies referenced fonts through PostCSS.
 - **PostCSS**: Inline plugin chain (import, url copy, custom properties, calc, autoprefixer, cssnano) executes inside the Vite build to produce `css/site.css` and `css/home.css`.
 - **live-server + watchexec**: Provide local serving and rebuild-on-change flows during development.
 

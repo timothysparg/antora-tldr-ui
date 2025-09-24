@@ -11,7 +11,7 @@
 	"scripts": {
 		"lint": "hk run check --all",
 		"fix": "hk run fix --all",
-		"bundle": "vite build --config vite.build.config.ts"
+		"bundle": "vite build"
 	},
 	"engines": {
 		"node": ">=18.0.0"
@@ -26,6 +26,10 @@
 		"@fontsource/comfortaa": "5.0.17",
 		"@fontsource/roboto": "5.0.8",
 		"@fontsource/roboto-mono": "5.0.15",
+		"@types/node": "24.5.2",
+		"@types/postcss-custom-properties": "9.1.1",
+		"@types/postcss-import": "14.0.3",
+		"@types/postcss-url": "10.0.4",
 		"autoprefixer": "10.4.21",
 		"cssnano": "6.0.1",
 		"docsearch.js": "2.6.3",
