@@ -106,6 +106,22 @@ The templates use Handlebars partial inclusion (`{{> partialName}}`) to compose 
 - **Fontsource** – Provides self-hosted font files that are copied into the bundle.
 - **watchexec / live-server** – Enable local rebuilds and preview serving.
 
+### Asset Management Best Practices
+
+#### Dependency Management
+- All third-party libraries (JS and CSS) MUST be added as dependencies in `package.json`.
+- Do NOT commit library files directly into the `src` directory.
+
+#### CSS Best Practices
+- Import vendor CSS directly from `node_modules` within the main application CSS files (e.g., `src/css/site.css`).
+- Example: `@import "@some-package/dist/style.css";`
+
+#### JavaScript Best Practices
+- Use ES Modules (`import`/`export`) for all new JavaScript code.
+- If a third-party library needs to be bundled separately (as is the case for `docsearch`, `highlight.js`, and `tabs.js`), create a modern ESM wrapper file in `src/js/vendor/` that imports the library.
+- Add this wrapper file as a new entry point in `vite.config.js`. This keeps vendor code separate from the main `site.js` bundle.
+- Avoid legacy formats like IIFEs and CommonJS (`require`) unless absolutely necessary for compatibility with an old library.
+
 ### Font Management
 
 Fontsource packages are imported through CSS (`@import '@fontsource/<family>/<weight>.css'`). During `mise run bundle`, Vite (via `vite-plugin-static-copy` and a PostCSS rewrite) copies the referenced font files from `node_modules/@fontsource/*/files/` into `build/fonts/` and rewrites `url(...)` references to target those local copies. Adding a new font requires installing the appropriate Fontsource package, importing the desired weights in `src/css/fonts.css`, and updating any CSS variables in `src/css/vars.css`.
@@ -215,7 +231,7 @@ When modifying UI elements, follow this systematic approach to find, change, and
   - Take accessibility snapshot and screenshot before changes
   - Make modifications to templates
   - Take new accessibility snapshot and screenshot after changes
-  - Compare structural differences in the accessibility tree
+  - Compare structural differences in the. accessibility tree
 
 - Use any available tooling to navigate, snapshot, and screenshot as supported by your environment
 
@@ -279,11 +295,11 @@ When working with Antora preview content and homepage configuration:
 
 ## Important Notes
 
-- Node.js version managed via `.mise.toml` (migrated from .nvmrc)
-- UI bundle is designed specifically for Antora static site generator
-- Source maps available in development, optional for production builds
-- Project supports deploy previews via Netlify for pull requests
-- Optional automation/search/documentation tools may be available via `.mcp.json`
+- Node.js version managed via `.mise.toml` (migrated from .nvmrc).
+- UI bundle is designed specifically for the Antora static site generator.
+- Source maps available in development, optional for production builds.
+- Project supports deploy previews via Netlify for pull requests.
+- Optional automation/search/documentation tools may be available via `.mcp.json`.
 
 # Agent Workflow Notes
 
@@ -540,7 +556,7 @@ User-Prompt: lets set @preview-src/home.adoc as the home page in @preview-src/ui
 When creating commits from the CLI, ensure messages use real line breaks and avoid shell interpretation issues:
 
 - Prefer a heredoc with `git commit -F -` to pass the full message with literal newlines.
-  - Use a single‑quoted heredoc delimiter to prevent expansion of backticks, `$()`, and `\n` sequences.
+  - Use a single‑quoted heredoc delimiter to prevent expansion of backticks, `$()`, and `'''` sequences.
   - Example:
     ```bash
     git commit -F - <<'MSG'
@@ -561,9 +577,9 @@ When creating commits from the CLI, ensure messages use real line breaks and avo
     MSG
     ```
 
-- Do not embed literal `\n` characters in `-m` strings; they will be committed as `\n` text, not newlines.
+- Do not embed literal `'''` characters in `-m` strings; they will be committed as `'''` text, not newlines.
 - Avoid using double quotes around `-m` when the message contains backticks (`` `like this` ``) or `$`; shells may perform command substitution. Use single quotes or a heredoc instead.
-- Multiple `-m` flags are acceptable to create separate paragraphs, but still avoid `\n` escapes — use actual line breaks or separate `-m` options.
+- Multiple `-m` flags are acceptable to create separate paragraphs, but still avoid `'''` escapes — use actual line breaks or separate `-m` options.
 
 Following these tips will ensure commit messages render correctly and include the required sections (Plan, User-Prompt, Co-Authors) with proper formatting.
 

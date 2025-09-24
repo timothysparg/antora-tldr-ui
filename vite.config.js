@@ -89,14 +89,14 @@ export default defineConfig(async () => {
 			rollupOptions: {
 				input: {
 					"js/site": resolve(__dirname, "src/js/site.js"),
-					"js/vendor/tabs": resolve(__dirname, "src/js/vendor/tabs.bundle.js"),
+					"js/vendor/tabs": resolve(__dirname, "src/js/vendor/tabs.esm.js"),
 					"js/vendor/highlight": resolve(
 						__dirname,
-						"src/js/vendor/highlight.bundle.js",
+						"src/js/vendor/highlight.esm.js",
 					),
 					"js/vendor/docsearch": resolve(
 						__dirname,
-						"src/js/vendor/docsearch.bundle.js",
+						"src/js/vendor/docsearch.esm.js",
 					),
 					"css/site": resolve(__dirname, "src/css/site.css"),
 					"css/home": resolve(__dirname, "src/css/home.css"),
@@ -167,10 +167,7 @@ export default defineConfig(async () => {
 					{ src: resolve(__dirname, "src/partials/**/*"), dest: "partials" },
 					{ src: resolve(__dirname, "src/helpers/**/*"), dest: "helpers" },
 					{ src: resolve(__dirname, "src/img/**/*"), dest: "img" },
-					{
-						src: resolve(__dirname, "src/css/vendor/**/*"),
-						dest: "css/vendor",
-					},
+
 					{
 						src: resolve(__dirname, "node_modules/@fontsource/roboto/files/*"),
 						dest: "fonts",
