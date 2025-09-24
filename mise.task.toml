@@ -1,31 +1,41 @@
-[tools]
-# Use latest LTS version of Node.js
-node = "lts"
-hk = "latest"
-pkl = "latest"
-biome = "latest"
-actionlint = "latest"
-"pipx:djlint" = "latest"
-shellcheck = "latest"
-watchexec = "latest"
+#:schema https://mise.jdx.dev/schema/mise-task.json
 
-[env]
-ANTORA_LOG_LEVEL = "info"
-ANTORA_CACHE_DIR = ".antora-cache"
+[default]
+description = "Start development server (alias for dev)"
+alias = "dev"
 
-[tasks.preview]
+[preview]
 description = "Build preview using Antora"
 run = """
   mise run bundle
   cd preview-src
   npx antora antora-playbook.yml \
     --log-level=${ANTORA_LOG_LEVEL:-info} \
-    --cache-dir=${ANTORA_CACHE_DIR:-.antora-cache}
+    --cache-dir=${ANTORA_CACHE_DIR}
 """
 sources = ["preview-src/**/*.{yml,adoc}"]
 outputs = ["public/**"]
 
-[tasks.serve]
+["preview:content-only"]
+description = "Rebuild Antora site with existing UI bundle"
+run = """
+  cd preview-src
+  npx antora antora-playbook.yml \
+    --log-level=${ANTORA_LOG_LEVEL:-info} \
+    --cache-dir=${ANTORA_CACHE_DIR}
+"""
+
+["preview:theme-only"]
+description = "Rebuild UI bundle and Antora site"
+run = """
+  mise run bundle
+  cd preview-src
+  npx antora antora-playbook.yml \
+    --log-level=${ANTORA_LOG_LEVEL:-info} \
+    --cache-dir=${ANTORA_CACHE_DIR}
+"""
+
+[serve]
 description = "Serve preview with live reload"
 run = """
   npx live-server \
@@ -37,11 +47,11 @@ run = """
     public
 """
 
-[tasks."watch:preview"]
+["watch:preview"]
 description = "Watch preview content and rebuild"
-run = "mise watch preview --clear"
+run = "mise watch preview:content-only --clear"
 
-[tasks."watch:theme"]
+["watch:theme"]
 description = "Watch theme files and rebuild"
 run = """
   watchexec \
@@ -53,19 +63,15 @@ run = """
     --watch src/img \
     --clear \
     -- \
-    mise run preview
+    mise run preview:theme-only
 """
 
-[tasks.dev]
+[dev]
 description = "Start development server"
 depends = ["preview"]
-run = [
-  { task = "serve" },
-  { task = "watch:preview" },
-  { task = "watch:theme" }
-]
+run = [{ task = "serve" }, { task = "watch:preview" }, { task = "watch:theme" }]
 
-[tasks.bundle]
+[bundle]
 description = "Create UI bundle for distribution"
 run = """
   TAG=${TAG:-v$(node -p "require('./package.json').version")}
@@ -74,16 +80,15 @@ run = """
 """
 outputs = ["ui-bundle.zip"]
 
-[tasks.clean]
+[clean]
 description = "Clean generated files"
 run = """
   rm -rf public build .antora-cache ui-bundle.zip
 """
 
-[tasks.validate]
+[validate]
 description = "Validate Antora setup"
 run = """
-  echo "Checking Antora structure..."
   test -f preview-src/antora.yml || echo "ERROR: Missing antora.yml"
   test -f preview-src/antora-playbook.yml || echo "ERROR: Missing playbook"
   test -d preview-src/modules/ROOT/pages || echo "ERROR: Missing pages directory"

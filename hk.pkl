@@ -9,6 +9,7 @@ local linters = new Mapping<String, Step> {
          "src/js/vendor/**"
       )
    }
+   ["taplo"] = (Builtins.taplo)
    ["stylelint"] = (Builtins.stylelint) {
       check = "npx -y stylelint --cache --cache-location .stylelintcache {{ files }}"
       fix = "npx -y stylelint --cache --cache-location .stylelintcache --fix {{ files }}"
@@ -30,6 +31,10 @@ local linters = new Mapping<String, Step> {
       )
       check = "mise run validate"
    }
+   ["pkl"] {
+        glob = "*.pkl"
+        check = "pkl eval {{files}} >/dev/null"
+    }
 }
 
 hooks {
