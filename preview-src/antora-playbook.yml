@@ -1,0 +1,31 @@
+site:
+  title: Antora TLDR UI Preview
+  start_page: preview::index.adoc
+  robots: disallow
+
+content:
+  sources:
+    - url: ../
+      branches: [HEAD]
+      start_path: preview-src
+
+ui:
+  bundle:
+    url: ../build
+    snapshot: true
+  supplemental_files:
+    - path: ui.yml
+      contents: |
+        static_files:
+          - .nojekyll
+    - path: .nojekyll
+
+runtime:
+  fetch: true
+  cache_dir: ./.antora-cache
+  log:
+    level: info
+
+output:
+  dir: ../public
+  clean: true

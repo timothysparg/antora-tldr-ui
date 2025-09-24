@@ -1,9 +1,0 @@
-[tools]
-# Use latest LTS version of Node.js
-node = "lts"
-hk = "latest"
-pkl = "latest"
-biome = "latest"
-actionlint = "latest"
-"pipx:djlint" = "latest"
-shellcheck = "latest"

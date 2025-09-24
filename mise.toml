@@ -1,0 +1,19 @@
+#:schema https://mise.jdx.dev/schema/mise.json
+
+[tools]
+node = "lts"
+hk = "latest"
+pkl = "latest"
+biome = "latest"
+actionlint = "latest"
+"pipx:djlint" = "latest"
+shellcheck = "latest"
+watchexec = "latest"
+taplo = { version = "latest", matching = "full" }
+
+[env]
+ANTORA_LOG_LEVEL = "info"
+ANTORA_CACHE_DIR = ".antora-cache"
+
+[task_config]
+includes = ["mise.task.toml"]

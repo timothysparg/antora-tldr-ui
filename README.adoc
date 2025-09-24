@@ -40,6 +40,7 @@ This project provides a blog-focused UI theme for Antora sites.
 It provides both the visual theme and user interactions optimized for blog-style content.
 The UI bundle that this project produces is designed to be used with Antora.
 It bundles the HTML templates (layouts, partials, and helpers), CSS, JavaScript, fonts, and site-wide images.
+Vite (configured in [.path]_vite.config.ts_) handles the JS/CSS build pipeline, while Mise tasks coordinate template copies, Antora preview builds, and packaging.
 The rest of the material for the docs site comes from the content repositories.
 
 == Usage
@@ -135,14 +136,14 @@ To automatically fix what can be corrected, run:
 
  $ hk run fix --all
 
-The npm scripts `npm run lint` and `npm run fix` delegate to these hk tasks so existing automation continues to work.
-
 The linting workflow includes:
 
 * **JavaScript/TypeScript**: Biome for code quality and formatting
+* **TypeScript Types**: `tsc --noEmit` for static type checking
 * **CSS**: stylelint for style validation and best practices
 * **HTML Templates**: djLint for Handlebars template validation and accessibility checks
 * **GitHub Actions**: actionlint for workflow validation
+* **Structure/Prereqs**: `mise run validate` to ensure Antora configuration and UI directories exist before builds
 
 === Preview the UI
 
@@ -153,18 +154,9 @@ These pages provide a representative sample and kitchen sink of content from the
 
 To build the UI and preview it in a local web server, run the development server:
 
- $ npm start
+ $ mise run dev
 
-This command builds the preview pages and starts Vite's development server with Hot Module Replacement (HMR) for fast development.
-
-[TIP]
-====
-You can also use the `dev` command directly:
-
- $ npm run dev
-
-The development server uses Vite for fast builds and automatic browser refresh when files change.
-====
+This command runs the Antora preview build once to populate [.path]_public/_ and then launches live-server plus watchexec watchers for preview content and UI theme files. Mise orchestrates the dependent processes so you get fast feedback without juggling multiple terminals.
 
 You'll see a URL listed in the output of this command:
 
@@ -176,8 +168,7 @@ You'll see a URL listed in the output of this command:
 
 Navigate to this URL to preview the site locally.
 
-While this command is running, any changes you make to the source files will be instantly reflected in the browser.
-This works by monitoring the project for changes, running the `preview:build` task if a change is detected, and sending the updates to the browser.
+While this command is running, any changes you make to `preview-src/modules/ROOT` or the files under [.path]_src/_ will trigger mise's watch tasks to rerun the preview build; live-server automatically reloads the browser when the Antora output changes.
 
 Press kbd:[Ctrl+C] to stop the preview server and end the continuous build.
 
@@ -185,19 +176,14 @@ Press kbd:[Ctrl+C] to stop the preview server and end the continuous build.
 
 If you need to package the UI so you can use it to generate the documentation site locally, run the following command:
 
- $ npm run build
+ $ mise run bundle
 
-This command runs linting, cleans previous builds, and creates the production bundle using Vite.
-If any errors are reported by lint, you'll need to fix them.
+This command invokes `npm run bundle` (Vite build with Rollup multi-entry configuration) to generate optimized CSS/JS assets, then copies Handlebars templates, helpers, and images into the [.path]_build/_ directory before zipping the UI bundle. The mise task exports a `TAG` environment variable (defaulting to `v${package.json.version}`) so Vite can write the version into `build/ui.yml`; pass `TAG=...` when you need a non-default tag.
+The PostCSS pipeline used by Vite is inlined in the Vite config, so no separate [.path]_postcss.config.cjs_ file is required.
+If any errors are reported during the build, you'll need to fix them before the bundle is produced.
 
 When the command completes successfully, the UI bundle will be available at [.path]_build/ui-bundle.zip_.
 You can point Antora at this bundle using the `--ui-bundle-url` command-line option.
-
-Alternatively, you can use the `bundle` command:
-
- $ npm run bundle
-
-Both commands produce the same ui-bundle.zip file.
 
 ==== Source Maps
 
@@ -208,10 +194,7 @@ This "`source mapping`" is accomplished by generating additional map files that 
 These map files sit adjacent to the combined files in the build folder.
 The mapping they provide allows the debugger to present the original source rather than the obfuscated file, an essential tool for debugging.
 
-In development mode, source maps are enabled automatically by Vite for fast debugging.
-For production builds, Vite optimizes the bundle without source maps by default.
-
-If you need to include source maps in the production bundle for debugging, you can modify the Vite configuration in [.path]_vite.config.js_ to enable source maps in production builds.
+JavaScript bundles are produced by esbuild with external source maps so you can debug locally; the zip step omits `*.map` files by default. CSS maps are disabled in the PostCSS task. If you need source maps inside the published bundle, adjust the `zip` exclusions in `.mise.toml` and remove `--no-map` from `build:css`.
 
 === Create an Online Preview
 
