@@ -2,7 +2,7 @@
 
 [default]
 description = "Start development server (alias for dev)"
-alias = "dev"
+depends = ["dev"]
 
 [preview]
 description = "Build preview using Antora"
@@ -38,13 +38,9 @@ run = """
 [serve]
 description = "Serve preview with live reload"
 run = """
-  npx live-server \
-    --host=127.0.0.1 \
-    --port=5252 \
-    --watch=public \
-    --mount=/vendor:node_modules \
-    --no-browser \
-    public
+  browser-sync start --server public \
+    --host 127.0.0.1 --port 5252 \
+    --files "public/**/*"
 """
 
 ["watch:preview"]
