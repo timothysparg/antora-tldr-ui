@@ -3,73 +3,18 @@ import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
-import JSZip from "jszip";
 import postcssCalc from "postcss-calc";
 import postcssCustomProperties from "postcss-custom-properties";
 import postcssImport from "postcss-import";
 import postcssUrl from "postcss-url";
 import { defineConfig } from "vite";
+import zipPack from "vite-plugin-zip-pack";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === "production";
 
-const collectFiles = async (directory) => {
-	const dirents = await fs.readdir(directory, { withFileTypes: true });
-	const nested = await Promise.all(
-		dirents.map((dirent) => {
-			const entryPath = resolve(directory, dirent.name);
-			return dirent.isDirectory() ? collectFiles(entryPath) : entryPath;
-		}),
-	);
-	return nested.flat();
-};
-
 export default defineConfig(async () => {
 	const { viteStaticCopy } = await import("vite-plugin-static-copy");
-	const archivePlugin = {
-		name: "ui-bundle-zip",
-		apply: "build",
-		enforce: "post",
-		async closeBundle() {
-			const versionTag =
-				process.env.TAG ?? `v${process.env.npm_package_version ?? ""}`;
-			const uiPath = resolve(__dirname, "build", "ui.yml");
-			try {
-				let content = await fs.readFile(uiPath, "utf8");
-				content = content.replace(/\n?version:\s.*$/m, "");
-				if (!content.endsWith("\n")) {
-					content += "\n";
-				}
-				content += `version: ${versionTag}\n`;
-				await fs.writeFile(uiPath, content);
-			} catch (_error) {
-				// Ignore if ui.yml is absent
-			}
-			const baseDir = resolve(__dirname, "build");
-			const entries = await collectFiles(baseDir);
-			const zip = new JSZip();
-			try {
-				const uiContent = await fs.readFile(uiPath);
-				zip.file("ui.yml", uiContent);
-			} catch (_error) {
-				// Ignore if ui.yml is absent when zipping
-			}
-			for (const filePath of entries) {
-				const relPath = relative(baseDir, filePath).split("\\").join("/");
-				if (relPath === "ui.yml") continue;
-				const contents = await fs.readFile(filePath);
-				zip.file(relPath, contents);
-			}
-			const zipPath = resolve(__dirname, "ui-bundle.zip");
-			await fs.rm(zipPath, { force: true });
-			const archive = await zip.generateAsync({
-				type: "nodebuffer",
-				compression: "DEFLATE",
-				compressionOptions: { level: 9 },
-			});
-			await fs.writeFile(zipPath, archive);
-		},
-	};
 
 	const customPropertiesPlugin = postcssCustomProperties({
 		disableDeprecationNotice: true,
@@ -189,7 +134,11 @@ export default defineConfig(async () => {
 					{ src: resolve(__dirname, "src/ui.yml"), dest: "." },
 				],
 			}),
-			archivePlugin,
+			zipPack({
+				inDir: "build",
+				outDir: __dirname,
+				outFileName: "ui-bundle.zip",
+			}),
 		],
 	};
 

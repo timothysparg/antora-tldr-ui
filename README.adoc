@@ -223,6 +223,16 @@ To access the UI bundle, append `dist/ui-bundle.zip` to the end of the preview U
 
 The temporary preview URL will automatically be decommissioned once the PR is closed.
 
+=== Version Management
+
+This project uses `package.json` as the single source of truth for versioning.
+The version is automatically managed by Release Please and stamped into the 
+UI bundle during the build process.
+
+* Version updates: Managed by Release Please via conventional commits
+* Version location: `package.json` 
+* Build process: `npm run build` (stamps version then builds)
+
 == Releases
 
 Releases are automated using Release Please and GitHub Actions.

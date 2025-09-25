@@ -172,6 +172,16 @@ The preview system mirrors production by letting Antora render the sample conten
 - Source maps are available for JavaScript builds; CSS maps are disabled in production by default.
 - Project supports deploy previews via Netlify for pull requests.
 - Optional automation/search/documentation tools may be available via `.mcp.json`.
+
+## Version Management
+
+The project version is managed through package.json and automated by release-please.
+During build:
+1. `stamp-version.js` reads version from package.json
+2. Version is written to src/ui.yml
+3. Vite bundles everything including the versioned ui.yml
+
+No environment variables are needed for version management.
 ## Tooling
 
 This project may be configured with development tools to enhance automation and research.

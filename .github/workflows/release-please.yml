@@ -15,7 +15,5 @@ jobs:
       - uses: googleapis/release-please-action@c2a5a2bd6a758a0937f1ddb1e8950609867ed15c
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: simple
-          # Manage a simple version file and CHANGELOG
-          version-file: version.txt
+          release-type: node
           include-v-in-tag: true

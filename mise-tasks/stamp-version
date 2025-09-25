@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+//MISE description="Stamps the version from package.json into src/ui.yml"
+
+import { readFileSync, writeFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const rootDir = join(__dirname, "..");
+
+// Read version from package.json (single source of truth)
+const packageJson = JSON.parse(
+  readFileSync(join(rootDir, "package.json"), "utf8")
+);
+const version = packageJson.version;
+
+// Read ui.yml
+const uiYmlPath = join(rootDir, "src", "ui.yml");
+let uiYmlContent = readFileSync(uiYmlPath, "utf8");
+
+// Update or add version
+if (/^version:/m.test(uiYmlContent)) {
+  // Replace existing version
+  uiYmlContent = uiYmlContent.replace(
+    /^version:.*$/m,
+    `version: v${version}`
+  );
+} else {
+  // Add version at the end
+  if (!uiYmlContent.endsWith("\n")) {
+    uiYmlContent += "\n";
+  }
+  uiYmlContent += `version: v${version}\n`;
+}
+
+// Write back
+writeFileSync(uiYmlPath, uiYmlContent);
+console.log(`✓ Stamped version v${version} into src/ui.yml`);

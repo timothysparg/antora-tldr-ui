@@ -18,4 +18,4 @@ ANTORA_LOG_LEVEL = "info"
 ANTORA_CACHE_DIR = ".antora-cache"
 
 [task_config]
-includes = ["mise.task.toml"]
+includes = ["mise.task.toml", "mise-tasks"]

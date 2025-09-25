@@ -69,11 +69,8 @@ run = [{ task = "serve" }, { task = "watch:preview" }, { task = "watch:theme" }]
 
 [bundle]
 description = "Create UI bundle for distribution"
-run = """
-  TAG=${TAG:-v$(node -p "require('./package.json').version")}
-  export TAG
-  npm run bundle
-"""
+depends = ["stamp-version"]
+run = "npm run bundle"
 outputs = ["ui-bundle.zip"]
 
 [clean]
