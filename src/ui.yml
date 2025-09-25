@@ -12,3 +12,4 @@ static_files:
   - partials/**/*
   - css/**/*
   - js/**/*
+version: v0.1.0
