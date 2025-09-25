@@ -31,20 +31,7 @@ export default defineConfig(async () => {
 		apply: "build",
 		enforce: "post",
 		async closeBundle() {
-			const versionTag =
-				process.env.TAG ?? `v${process.env.npm_package_version ?? ""}`;
 			const uiPath = resolve(__dirname, "build", "ui.yml");
-			try {
-				let content = await fs.readFile(uiPath, "utf8");
-				content = content.replace(/\n?version:\s.*$/m, "");
-				if (!content.endsWith("\n")) {
-					content += "\n";
-				}
-				content += `version: ${versionTag}\n`;
-				await fs.writeFile(uiPath, content);
-			} catch (_error) {
-				// Ignore if ui.yml is absent
-			}
 			const baseDir = resolve(__dirname, "build");
 			const entries = await collectFiles(baseDir);
 			const zip = new JSZip();
