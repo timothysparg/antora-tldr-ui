@@ -10,6 +10,8 @@ actionlint = "latest"
 shellcheck = "latest"
 watchexec = "latest"
 taplo = { version = "latest", matching = "full" }
+"npm:browser-sync" = "latest"
+
 
 [env]
 ANTORA_LOG_LEVEL = "info"
